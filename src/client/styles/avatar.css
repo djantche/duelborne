@@ -1,0 +1,62 @@
+/* Avatars : pastille ronde (illustration d'une carte, ordinateur ou initiale), choix dans les Options, duellistes du HUD. */
+.avatar { --size: 30px; flex: none; position: relative; display: inline-grid; place-items: center; width: var(--size); height: var(--size); border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 35% 30%, #3a4384, #151a3a); border: 1.5px solid color-mix(in srgb, var(--c, var(--me)) 70%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--c, var(--me)) 30%, transparent); color: var(--ink); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar b { font: 700 calc(var(--size) * 0.46) / 1 var(--display); }
+.avatar svg { width: 62%; height: 62%; }
+.avatar.bot { color: var(--c, var(--me)); }
+
+/* Options */
+.opt-avatar { display: inline-flex; align-items: center; gap: 10px; }
+.opt-avatar .avatar { --size: 40px; --c: var(--gold); }
+
+/* Fenêtre de choix */
+.modal.avatar-picker { z-index: 100; padding: 24px; }
+.avatar-picker .modal-in { width: min(720px, 100%); }
+.avatar-picker-tools { display: flex; align-items: center; gap: 12px; }
+.avatar-picker-tools .avatar { --size: 44px; --c: var(--gold); }
+.avatar-picker-hint { margin: -4px 0 0; min-height: 1.2em; color: var(--muted); font-size: 13px; }
+.avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; overflow-y: auto; padding: 4px; overscroll-behavior: contain; }
+.avatar-choice { display: block; width: 100%; aspect-ratio: 1; padding: 0; border-radius: 50%; overflow: hidden; border: 2px solid var(--line); background: #151a3a; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+.avatar-choice img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-choice:hover { border-color: var(--gold); transform: translateY(-1px); }
+.avatar-choice:focus-visible { outline: none; border-color: var(--gold-2); box-shadow: 0 0 0 3px rgba(245, 196, 81, 0.35); }
+.avatar-choice.on { border-color: var(--gold-2); box-shadow: 0 0 0 3px rgba(245, 196, 81, 0.35), 0 0 16px rgba(245, 196, 81, 0.4); }
+
+/* HUD du duel */
+.hud-who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.hud-members { flex: 1 1 auto; display: flex; gap: 4px 6px; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.hud-member { display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; padding: 1px 8px 1px 1px; border-radius: 999px; border: 1px solid transparent; transition: opacity 0.25s, background 0.25s, border-color 0.25s; }
+.hud-member .avatar { --size: 26px; }
+.hud-member-name { font: 700 15px var(--display); letter-spacing: 0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Le duelliste qui a la main : anneau et fond à la couleur de l'équipe ; l'autre s'efface. */
+.hud-member.on { border-color: var(--c); background: color-mix(in srgb, var(--c) 18%, transparent); box-shadow: 0 0 12px color-mix(in srgb, var(--c) 35%, transparent); }
+.hud-member.on .avatar { border-color: var(--c); box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent), 0 0 12px var(--c); }
+.hud-member.on { flex: 0 1 auto; }
+/* Le coéquipier qui attend se réduit à son avatar estompé : la ligne tient, son nom reste lu (lecteur d'écran, infobulle). */
+.hud-member.idle { flex: none; padding: 1px; opacity: 0.55; }
+.hud-member.idle .hud-member-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.hud-member.idle .avatar img { filter: grayscale(0.7); }
+.hud-member-mark { flex: none; display: grid; place-items: center; width: 16px; height: 16px; color: var(--c); }
+.hud-member-mark svg { width: 100%; height: 100%; fill: currentColor; }
+@media (prefers-reduced-motion: no-preference) {
+  .hud-member.on .avatar { animation: avatar-lead 1.6s ease-in-out infinite; }
+}
+@keyframes avatar-lead { 50% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 30%, transparent), 0 0 18px var(--c); } }
+
+/* Téléphone en paysage : colonne compacte. */
+@media (max-height: 560px) {
+  .hud-who { gap: 5px; }
+  .hud-who .avatar { --size: 20px; }
+  .hud-members { gap: 3px; }
+  .hud-member { gap: 4px; padding: 1px 6px 1px 1px; }
+  .hud-member .avatar { --size: 20px; }
+  .hud-member-name { font-size: 12px; }
+  /* Place comptée : l'anneau suffit à montrer qui a la main ; le repère reste lu par les lecteurs d'écran. */
+  .hud-member-mark { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .hud-member.idle .avatar { --size: 16px; }
+}
+@media (max-width: 760px), (max-height: 560px) {
+  .modal.avatar-picker { padding: 8px; }
+  .avatar-picker-tools { flex-wrap: wrap; }
+  .avatar-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+}

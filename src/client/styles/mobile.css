@@ -1,0 +1,234 @@
+/*
+ * Téléphone en paysage (écran bas). La colonne de gauche disparaît : la fiche d'une carte s'ouvre
+ * en la touchant. La colonne de droite se réduit aux points de vie et aux phases.
+ */
+@media (max-height: 560px) {
+  :root {
+    --ch: min(16.8dvh, 6.9vw);
+    --hh: min(27dvh, 11.6vw);
+    --fh: min(13dvh, 6vw);
+  }
+  body { font-size: 13px; }
+
+  .duel { grid-template-columns: minmax(0, 1fr) clamp(112px, 15vw, 150px); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+
+  /*
+   * Fiche de carte. La colonne de gauche n'existe pas : toucher une carte affiche un bandeau d'une ligne ;
+   * la fiche complète ne s'ouvre que par un appui long ou en touchant le bandeau, et ne recouvre jamais le jeu par surprise.
+   */
+  .left { display: none; }
+  .infobar { position: fixed; z-index: 4; top: 5px; left: calc(max(6px, env(safe-area-inset-left)) + 42px); display: flex; align-items: center; gap: 8px; max-width: min(64vw, 600px); height: 36px; padding: 0 10px 0 4px; border-radius: 10px; border: 1px solid var(--gold); color: var(--ink); font: inherit; text-align: left; background: rgba(10, 13, 30, 0.95); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.7), 0 0 16px rgba(245, 196, 81, 0.2); cursor: pointer; animation: drop-bar 0.16s ease-out; }
+  @keyframes drop-bar { from { opacity: 0; transform: translateY(-8px); } }
+  .infobar-art { flex: none; width: 28px; height: 28px; border-radius: 7px; background-size: cover; background-position: center; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3); }
+  .infobar-text { display: grid; min-width: 0; line-height: 1.12; }
+  .infobar-text b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 13px var(--hud); letter-spacing: 0.02em; color: var(--gold-2); }
+  .infobar-text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; color: var(--muted); }
+  .infobar .nums { flex: none; display: flex; gap: 7px; margin: 0; font: 700 12px var(--hud); white-space: nowrap; }
+  .infobar .nums .atk { color: var(--gold-2); }
+  .infobar .nums .def { color: #8fd8ff; }
+  .infobar-more { flex: none; display: flex; align-items: center; gap: 1px; font: 700 11px var(--hud); letter-spacing: 0.08em; text-transform: uppercase; color: var(--me); }
+  .infobar-more svg { width: 13px; height: 13px; }
+  .sheet-wrap { position: fixed; inset: 0; z-index: 5; display: flex; padding: 6px max(6px, env(safe-area-inset-right)) 6px max(6px, env(safe-area-inset-left)); background: rgba(3, 4, 12, 0.6); animation: fade 0.14s ease-out; }
+  .sheet { position: relative; width: min(66vw, 620px); height: 100%; overflow: hidden; border-color: var(--gold); }
+  .sheet-close { position: absolute; right: 6px; top: 6px; z-index: 2; width: 34px; height: 34px; }
+  .sheet .detail { flex-direction: row; align-items: flex-start; height: 100%; padding: 10px 44px 10px 10px; gap: 10px; border: 0; border-radius: 0; background: rgba(10, 13, 30, 0.97); overscroll-behavior: contain; }
+  .sheet .detail > .card { position: sticky; top: 0; flex: none; width: 36%; }
+  .detail-text h3 { font-size: 15px; }
+  .detail-text .nums { font-size: 15px; }
+  .detail-text .desc { font-size: 12.5px; line-height: 1.4; }
+
+  .mat-wrap { padding: 3dvh 0 15dvh; perspective: 1100px; }
+  .mat { padding: 1.2dvh 1.6dvh; border-radius: 14px; transform: rotateX(14deg); }
+  .half { gap: calc(var(--ch) * 0.16); }
+  .hand.foe { top: calc(var(--fh) * -0.72); }
+  .hand.me { bottom: calc(var(--hh) * -0.44); }
+  .hand.me .hcard.known:hover .hlift, .hand.me .hcard.known.raised .hlift, .hand.me .hcard.known:has(.card.picked) .hlift { transform: translateY(-34%) scale(1.12); }
+  .hint { bottom: 17dvh; font-size: 12px; padding: 5px 14px; }
+  .chainbar { top: 12dvh; left: 6px; padding: 4px 6px; }
+  .chainbar { gap: 6px; }
+  .chainbar .link .card { width: 38px; height: 56px; }
+
+  /* Colonne de droite compacte */
+  .right { padding: 6px 6px 6px 2px; gap: 4px; }
+  .hud { padding: 5px 8px 5px 10px; border-radius: 10px; }
+  .hud-name { font-size: 12px; }
+  .settings summary { padding: 6px 0; font-size: 12px; }
+  .settings-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .settings .sel { font-size: 13px; padding: 4px 8px; }
+  .settings p { display: none; }
+  .tag { font-size: 9px; padding: 1px 5px; }
+  .lp { margin-top: 0; }
+  .lp-num { font-size: clamp(20px, 7.4dvh, 30px); }
+  .lp small { font-size: 11px; }
+  .lp-bar { height: 5px; margin: 3px 0 0; }
+  .hud-meta { display: none; }
+  .phases { gap: 4px; position: relative; }
+  .turn-label { margin: 0; }
+  .turn-label small { display: none; }
+  .turn-label b { font-size: 12px; }
+  .pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .phase { padding: 0; height: clamp(26px, 8.4dvh, 36px); justify-content: center; border-radius: 7px; }
+  .phase span { display: none; }
+  .phase b { flex: none; font-size: 13px; }
+  .phase.go:hover { transform: none; }
+  .phases .end { margin: 0; padding: 0; height: clamp(30px, 9.6dvh, 40px); font-size: 13px; letter-spacing: 0.04em; }
+  .phases .btn.small { margin: 0; padding: 4px; font-size: 11px; }
+
+  /* Questions et menus : cibles tactiles plus grandes, texte plus compact */
+  .panel { bottom: 6px; padding: 8px 12px; gap: 6px; max-width: 78vw; }
+  .panel-title { font-size: 14px; }
+  .panel .btn { padding: 8px 14px; font-size: 14px; }
+  .actions { min-width: 170px; }
+  .actions button { padding: 10px 12px; font-size: 14px; }
+  .toast { top: 8px; font-size: 13px; padding: 7px 14px; }
+  .modal { padding: 8px; }
+  .duel { --ch: min(13.6dvh, 5.9vw); }
+  .tools { margin: 0; gap: 3px; }
+  .tools .btn.icon { flex: 1; width: auto; height: clamp(22px, 6.4dvh, 28px); }
+  .tools .btn.icon svg { width: 15px; height: 15px; }
+  .chooser-help { display: none; }
+  .fx-reveal { padding: 8px 12px; }
+  .modal-in { max-height: 96dvh; padding: 10px; gap: 8px; }
+  .modal-in h2 { font-size: 16px; }
+  .modal .grid .card, .choice .card { width: 84px; height: 122px; }
+  /* Fenêtres de choix : toute la largeur ; elles descendent d'un cran quand le bandeau de la carte touchée est affiché. */
+  #ui:has(.infobar) .modal.chooser:not(.reply) { padding-top: 46px; }
+  #ui .modal.reply { padding: 8px 8px 6px; }
+  .modal.reply .modal-in { min-width: 0; }
+  .chooser .modal-in header { gap: 6px 10px; }
+  .chooser .btn { padding: 7px 12px; font-size: 13px; }
+  .effects-title { font-size: 12px; margin-bottom: 4px; }
+  .btn.effect { padding: 6px 10px; max-width: 46vw; }
+  .btn.effect small { font-size: 11px; }
+  .hint.wait { top: 6px; bottom: auto; }
+  .modal.reply .modal-in { gap: 6px; }
+  .reply .choice { padding: 3px; }
+  .reply .choice .card { width: 72px; height: 105px; }
+  .choice small { max-width: 90px; font-size: 11px; }
+  .reply-to { font-size: 12px; }
+  .reply-to i { width: 24px; height: 24px; }
+  .banner { height: 22dvh; }
+  .fx-text { font-size: 30px; }
+  .fx-text.dmg, .fx-text.heal { font-size: 46px; }
+  .fx-text.dmg.huge { font-size: 60px; }
+
+  /* Salon : le versus se resserre ; le bouton plein écran flottant laisse la place au retour. */
+  .lobby { padding-top: 6px; padding-bottom: 8px; gap: 6px; }
+  .lobby header { padding-left: 84px; gap: 10px; }
+  .lobby-title h1 { font-size: 20px; }
+  .lobby-title small { font-size: 10px; }
+  .versus { gap: 10px; }
+  .vs { font-size: 26px; }
+  .seat { padding: 8px 10px; gap: 6px; border-radius: 14px; }
+  .seat-head > svg { width: 24px; height: 24px; padding: 3px; }
+  .seat-name { font-size: 16px; }
+  .seat-role { font-size: 9px; }
+  .seat.waiting { padding: 12px; }
+  .deck-slot { padding: 6px; gap: 10px; }
+  .slot-art { width: 46px; height: 64px; }
+  .slot-text b { font-size: 15px; -webkit-line-clamp: 1; }
+  .slot-text small, .slot-text em { font-size: 11px; }
+  .slot-change { padding: 4px 8px; font-size: 10px; }
+  .levels { padding: 3px; }
+  .lvl { padding: 4px 2px; font-size: 12px; }
+  .lvl i { display: none; }
+  .versus.teams .seat { padding: 5px 8px; gap: 4px; }
+  .versus.teams .slot-art { width: 34px; height: 48px; }
+  .versus.teams .slot-text em, .versus.teams .slot-change { display: none; }
+  .versus.teams .team > small { font-size: 10px; }
+  .versus.teams .team { gap: 4px; }
+  .versus.teams .seat-head > svg, .versus.teams .seat-role { display: none; }
+  .versus.teams .seat-name { font-size: 14px; }
+  .versus.teams .deck-slot { padding: 3px 6px; gap: 6px; }
+  .versus.teams .slot-art { width: 24px; height: 34px; }
+  .versus.teams .slot-art svg { width: 16px; height: 16px; }
+  .versus.teams .slot-text small { display: none; }
+  .versus.teams .slot-text b { font-size: 13px; }
+  .versus.teams .levels { padding: 2px; }
+  .versus.teams .lvl { padding: 2px; font-size: 11px; }
+  .seat-actions { flex-direction: column; }
+  .settings summary { padding: 6px 0; font-size: 12px; }
+  .lobby footer { gap: 2px; padding-top: 0; }
+  .lobby footer .btn { padding: 7px 14px; font-size: 14px; min-width: 0; }
+  .lobby footer p { font-size: 12px; }
+  /* Choix d'un deck : la fenêtre prend tout l'écran. */
+  .picker-back { padding: 6px; }
+  .picker { padding: 10px 12px; gap: 6px; height: 100%; }
+  .picker-title h2 { font-size: 18px; }
+  .picker-title small { font-size: 10px; }
+  .picker-search input { padding: 7px 0; font-size: 14px; }
+  .chip { padding: 4px 10px; font-size: 12px; }
+  .decks { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; }
+  .deck-art { height: 62px; }
+  button.deck b { font-size: 14px; }
+  button.deck em { display: none; }
+  .picker-list h3 { font-size: 11px; margin: 0 0 4px; }
+  /* Le bouton plein écran flottant suffit : on libère la place dans la colonne du duel. */
+  .tools [data-act='fullscreen'] { display: none; }
+  /* Écran-titre : titre à gauche, menu compact à droite, sans descriptions ; le sous-menu prend la place du menu. */
+  .home { gap: 18px; padding: 8px 14px; }
+  .home .title { width: 34vw; gap: 8px; }
+  .home .title .logo { font-size: 30px; }
+  .home .deco { height: 74px; }
+  .home .deco .card { width: 50px; height: 72px; }
+  .menu, .submenu { width: 54vw; gap: 4px; }
+  .home.has-sub .menu { display: none; }
+  .submenu { padding: 8px; }
+  .submenu header { padding-bottom: 2px; }
+  .entry { padding: 7px 14px 7px 18px; gap: 12px; border-radius: 11px; }
+  .entry svg { width: 18px; height: 18px; }
+  .entry b { font-size: 15px; }
+  .entry.main { padding-block: 9px; }
+  .entry.main b { font-size: 17px; }
+  .entry.main svg { width: 20px; height: 20px; }
+  .entry small { display: none; }
+  .field input { padding: 7px; font-size: 16px; }
+  .screen .glass { padding: 16px 22px; gap: 8px; }
+  .screen:not(.home) .deco { display: none; }
+  .logo { font-size: 34px; }
+}
+
+/* Sans souris, pas de survol : on évite les effets qui resteraient « collés » après un toucher. */
+@media (hover: none) {
+  .hand.me .hcard.known:hover .hlift { transform: none; }
+  /* Les cartes jouables dépassent un peu ; la carte touchée (.raised) garde sa propre règle, plus bas. */
+  .hand.me .hcard.known:not(.raised):has(.card.effect-ready) .hlift, .hand.me .hcard.known:not(.raised):has(.card.pickable) .hlift { transform: translateY(-10%); }
+  button.deck:hover:not(:disabled) { transform: none; }
+  /* La carte touchée, elle, se soulève franchement et le reste. */
+  .hand.me .hcard.known.raised .hlift, .hand.me .hcard.known:has(.card.picked) .hlift { transform: translateY(-34%) scale(1.12); }
+}
+
+/* Téléphone : compléments. */
+@media (max-height: 560px) {
+  .counter-pick .card { width: 72px; height: 105px; }
+  .stepper .btn { width: 36px; height: 36px; }
+  .search { padding: 8px 10px; font-size: 16px; }
+  .choice .rank { min-width: 24px; height: 24px; font-size: 14px; }
+  .lv { gap: 2px; margin: 0; }
+  .lv i { width: 11px; height: 11px; border-width: 1.5px; }
+  .where { max-width: none; font-size: 9.5px; padding: 2px 7px 2px 5px; }
+  .where > span { white-space: nowrap; }
+  /* Compteurs : le jeton seul (le nom se lit dans le bandeau ou la fiche), pour ne pas déborder sur la zone voisine. */
+  .ctrs:not(.big) { grid-auto-flow: column; gap: 2px; }
+  .ctrs:not(.big) .ctr { padding-right: 0; font-size: 10px; }
+  .ctrs:not(.big) .ctr em { display: none; }
+  /*
+   * Questions qui se règlent en touchant le plateau ou la main (cocher des cartes, viser une cible) : le panneau
+   * se range dans la marge libre à gauche du tapis, en colonne, et ne recouvre ni la main ni les zones.
+   */
+  .panel.aside { left: max(4px, env(safe-area-inset-left)); bottom: auto; top: 25dvh; transform: none; width: max(104px, calc((100vw - clamp(112px, 15vw, 150px) - var(--zone) * 7.5) / 2 - 8px)); max-width: none; padding: 8px 6px; gap: 6px; animation: none; }
+  .panel.aside .panel-title { flex-direction: column; gap: 5px; font-size: 12px; line-height: 1.2; }
+  .panel.aside .panel-title small { flex-direction: column; gap: 4px; }
+  .panel.aside .lv { flex-wrap: wrap; justify-content: center; max-width: 100%; }
+  .panel.aside .tray { max-width: 100%; gap: 4px; padding: 4px 5px; }
+  .panel.aside .tray-card { width: 28px; height: 41px; border-width: 1.5px; }
+  .panel.aside .tray-label, .panel.aside .tray-empty { width: 100%; text-align: center; font-size: 11px; }
+  .panel.aside .panel-row { flex-direction: column; align-items: stretch; width: 100%; gap: 5px; }
+  .panel.aside .btn { justify-content: center; padding: 8px 4px; font-size: 13px; }
+  /* Menus à nombreux choix (Console du bac à sable) : trois colonnes de boutons compacts, tout visible d'un coup. */
+  .panel { max-width: 92vw; }
+  .panel .btn.choice-btn { flex: 1 1 29%; min-width: 0; font-size: 12px; line-height: 1.15; padding: 6px 7px; letter-spacing: 0; }
+  .panel-row.wrap { max-height: 56dvh; overflow-y: auto; gap: 5px; }
+  /* La chaîne en cours reste au-dessus du panneau latéral. */
+  .chainbar { top: 11dvh; }
+}

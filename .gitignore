@@ -1,0 +1,13 @@
+data/
+node_modules/
+/dist/
+
+# Livret de règles officiel : document sous droits d'auteur, gardé en local uniquement.
+docs/*.pdf
+
+# Decks créés par les joueurs sur la page Mon Deck (avant les comptes) et base des joueurs (comptes, decks, historique).
+decks/user/
+decks/user.avant-comptes-*/
+save/
+
+__pycache__/

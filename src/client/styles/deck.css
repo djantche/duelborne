@@ -1,0 +1,239 @@
+/* Page Mon Deck. Pensée pour le téléphone en paysage (844 × 390) : tout tient sans défilement de la page,
+   seules les listes défilent. En portrait ou sur un écran étroit, un seul panneau est visible (sélecteur en bas). */
+.dk {
+  --frame: #8b93b8;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: max(6px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  text-align: left;
+}
+.dk .btn.icon { width: 34px; height: 34px; font-size: 20px; line-height: 1; }
+.dk .btn.icon svg { width: 18px; height: 18px; }
+.dk .btn.small { padding: 6px 10px; }
+
+/* ── Barre du haut ── */
+.dk-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.dk-name { flex: 1 1 150px; min-width: 110px; }
+.dk-name input { width: 100%; font: 700 17px var(--hud); color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; outline: none; }
+.dk-name input:focus, .dk-search input:focus, .dk-field textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 196, 81, 0.18); }
+.dk-chip { font: 600 13px var(--hud); letter-spacing: 0.04em; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; background: rgba(12, 16, 36, 0.6); }
+.dk-chip b { color: var(--ink); font-size: 15px; }
+.dk-chip.warn { border-color: rgba(255, 170, 90, 0.6); }
+.dk-chip.warn b { color: #ffb36b; }
+.dk-chip.ok { border-color: rgba(93, 255, 176, 0.5); }
+.dk-chip.ok b { color: #5dffb0; }
+.dk-note { margin: 0; padding: 5px 12px; border-radius: 9px; font: 600 14px/1.3 var(--hud); cursor: pointer; }
+.dk-note.good { color: #b9ffe0; background: rgba(40, 140, 100, 0.22); border: 1px solid rgba(93, 255, 176, 0.4); }
+.dk-note.bad { color: #ffd9d3; background: rgba(150, 40, 40, 0.28); border: 1px solid rgba(255, 107, 90, 0.5); }
+.dk-note:has(.dk-note-x) { display: flex; align-items: center; gap: 8px; cursor: default; }
+.dk-note:has(.dk-note-x) > span { flex: 1; min-width: 0; }
+.dk .dk-note-x { flex: none; width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin: -2px -6px -2px 0; border-color: transparent; background: transparent; }
+.dk .dk-note-x svg { width: 14px; height: 14px; }
+.dk-filters svg { display: none; }
+
+/* ── Deux panneaux ── */
+.dk-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.dk-lib, .dk-deck { min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; background: rgba(10, 13, 30, 0.55); border: 1px solid var(--line); border-radius: 14px; padding: 8px; }
+.dk-hint { margin: 0; padding: 10px 4px; color: var(--muted); font-size: 14px; }
+
+/* Bibliothèque */
+.dk-search { display: flex; gap: 6px; }
+.dk-search input { flex: 1; min-width: 0; font: 600 15px var(--hud); color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; outline: none; }
+.dk-kinds { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+.dk-kind { flex: none; font: 700 13px var(--hud); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.dk-kind.on { color: #1c1400; background: var(--gold-2); border-color: var(--gold-2); }
+.dk-adv { display: flex; flex-wrap: wrap; align-items: end; gap: 6px 8px; }
+.dk-adv label { display: grid; gap: 2px; }
+.dk-adv small, .dk-field small { color: var(--muted); letter-spacing: 0.06em; }
+.dk-results { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 3px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.dk-results > .btn { align-self: center; flex: none; margin: 4px 0; }
+
+/* Couleur de cadre selon le type de carte (celle des vraies cartes). */
+[data-frame='normal'] { --frame: #dcb95f; }
+[data-frame='effect'] { --frame: #d9783f; }
+[data-frame='ritual'] { --frame: #6a9be0; }
+[data-frame='fusion'] { --frame: #a273d1; }
+[data-frame='synchro'] { --frame: #f4f2ea; }
+[data-frame='xyz'] { --frame: #8a8a9c; }
+[data-frame='link'] { --frame: #3f8cc9; }
+[data-frame='spell'] { --frame: #25b094; }
+[data-frame='trap'] { --frame: #cc5596; }
+
+.dk-row { flex: none; display: flex; align-items: center; gap: 4px; border-left: 4px solid var(--frame); border-radius: 9px; background: rgba(20, 26, 56, 0.6); }
+.dk-row.has { background: rgba(60, 80, 150, 0.32); }
+.dk-row-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 3px 4px; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.dk-row-main img { flex: none; width: 31px; height: 44px; border-radius: 4px; object-fit: cover; background: #10142c; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); }
+.dk-row-main span { min-width: 0; display: grid; }
+.dk-row-main b { font: 700 14.5px/1.2 var(--hud); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-row-main small { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-qty { flex: none; display: flex; align-items: center; gap: 4px; padding-right: 4px; }
+.dk-qty b { min-width: 1.1em; text-align: center; font: 700 16px var(--hud); color: var(--gold-2); }
+.dk-qty .btn { padding: 0; }
+
+/* Le deck */
+.dk-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.dk-tab { font: 700 14px var(--hud); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 10px; padding: 7px 8px; cursor: pointer; }
+.dk-tab b { color: var(--ink); margin-left: 4px; }
+.dk-tab.on { color: #1c1400; background: var(--gold-2); border-color: var(--gold-2); }
+.dk-tab.on b { color: #1c1400; }
+.dk-status { display: flex; align-items: flex-start; gap: 6px; margin: 0; font: 600 13px/1.3 var(--hud); }
+.dk-status svg { flex: none; width: 16px; height: 16px; margin-top: 1px; }
+.dk-status em { display: block; font-style: normal; color: var(--muted); font-weight: 500; }
+.dk-status.ok { color: #5dffb0; }
+.dk-status.warn { color: #ffb36b; }
+.dk-cards { flex: 1; min-height: 0; overflow-y: auto; padding-right: 3px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.dk-section h4 { margin: 8px 0 4px; font: 700 12px var(--hud); letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-2); }
+.dk-section h4 small { color: var(--muted); font-size: 12px; margin-left: 4px; }
+.dk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 6px; }
+.dk-tile { position: relative; }
+.dk-open { cursor: pointer; border-radius: 5px; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55)); transition: transform 0.12s; }
+.dk-open:hover { transform: translateY(-2px); }
+.dk-open .card { width: 100%; height: auto; aspect-ratio: 59 / 86; }
+.dk-tile > em { position: absolute; left: 3px; top: 3px; min-width: 1.8em; text-align: center; border-radius: 999px; font: 700 12px/1.5 var(--hud); font-style: normal; color: #10142c; background: var(--gold-2); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6); pointer-events: none; }
+.dk-minus { position: absolute; right: 2px; bottom: 2px; width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(10, 13, 30, 0.88); color: var(--ink); font: 700 18px/1 var(--hud); cursor: pointer; }
+.dk-minus::after { content: ''; position: absolute; inset: -8px; }
+.dk-minus:hover { border-color: var(--foe); color: var(--foe); }
+.dk-tile.bad .dk-open { outline: 2px solid var(--foe); outline-offset: 1px; }
+
+/* ── Sélecteur de panneau (écran étroit) ── */
+.dk-nav { display: none; }
+@media (max-width: 759px), (orientation: portrait) {
+  .dk-body { grid-template-columns: minmax(0, 1fr); }
+  .dk[data-view='cards'] .dk-deck, .dk[data-view='deck'] .dk-lib { display: none; }
+  .dk-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .dk-nav button { font: 700 15px var(--hud); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: rgba(12, 16, 36, 0.8); border: 1px solid var(--line); border-radius: 10px; padding: 9px 8px; cursor: pointer; }
+  .dk-nav button.on { color: #1c1400; background: var(--gold-2); border-color: var(--gold-2); }
+  .dk-nav b { margin-left: 4px; }
+  .dk-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+}
+
+/* ── Fiche d'une carte et fenêtres ── */
+.dk-overlay { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); background: rgba(3, 4, 12, 0.72); backdrop-filter: blur(4px); animation: fade 0.14s ease-out; }
+.dk-sheet { position: relative; width: min(100%, 720px); max-height: 100%; display: flex; flex-direction: column; gap: 8px; padding: 12px; border-color: var(--gold); text-align: left; }
+.dk-x { position: absolute; right: 8px; top: 8px; z-index: 2; }
+.dk-sheet-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; align-items: flex-start; gap: 14px; padding-right: 40px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.dk-sheet-body > .card { flex: none; width: min(34%, 38dvh); height: auto; aspect-ratio: 59 / 86; cursor: default; position: sticky; top: 0; filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6)); }
+.dk-sheet-body .detail-text { flex: 1; min-width: 0; width: auto; }
+.dk-sheet-body .detail-text h3 { font-size: 17px; }
+.dk-sheet-body .detail-text .desc { font-size: 13px; line-height: 1.4; }
+.dk-sheet footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 8px; border-top: 1px solid var(--line); }
+.dk-stepper { display: flex; align-items: center; gap: 10px; }
+.dk-stepper span { font: 600 16px var(--hud); color: var(--muted); min-width: 3em; text-align: center; }
+.dk-stepper b { color: var(--gold-2); font-size: 20px; }
+.dk-why { flex: 1; min-width: 140px; color: var(--muted); font-size: 13px; }
+@media (orientation: portrait) {
+  .dk-sheet-body { flex-direction: column; align-items: center; padding-right: 0; }
+  .dk-sheet-body > .card { width: min(56%, 30dvh); position: static; }
+  .dk-sheet-body .detail-text { width: 100%; }
+}
+
+.dk-dialog { width: min(560px, 100%); max-height: calc(100dvh - 16px); overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 14px; text-align: left; }
+.dk-dialog header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dk-dialog h2 { font: 700 20px var(--display); color: var(--gold-2); }
+.dk-dialog h3 { font: 700 12px var(--hud); letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-2); margin-top: 6px; }
+.dk-dialog-body { min-height: 0; overflow-y: auto; display: grid; gap: 10px; align-content: start; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.dk-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.dk-field { display: grid; gap: 4px; }
+.dk-field textarea { width: 100%; font: 500 13px/1.45 ui-monospace, 'Cascadia Mono', monospace; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 10px; outline: none; resize: vertical; }
+.dk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.dk-list li { display: flex; align-items: center; gap: 5px; }
+.dk-item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 10px; background: rgba(12, 16, 36, 0.6); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.dk-item:hover, .dk-item.on { border-color: var(--gold); }
+.dk-item img { flex: none; width: 31px; height: 44px; border-radius: 4px; object-fit: cover; background: #10142c; }
+.dk-item span { min-width: 0; display: grid; }
+.dk-item b { font: 700 15px var(--hud); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-item small { color: var(--muted); font-size: 12px; }
+.dk-item small i { color: #ffb36b; font-style: normal; }
+
+/* Les boutons flottants (plein écran, sons) cacheraient la barre du haut : on les retrouve sur l'accueil. */
+body[data-screen='deck'] .fs-btn { display: none; }
+.dk .btn svg { width: 16px; height: 16px; }
+.dk .btn.icon svg { width: 18px; height: 18px; }
+
+/* Accueil en portrait : les modes de jeu empilés dépassent de l'écran, la page doit défiler pour atteindre « Mon Deck ». */
+@media (orientation: portrait) {
+  .screen { overflow-y: auto; align-items: start; }
+  .screen > .glass { margin-block: auto; }
+}
+
+/* ── Navigateur de decks : onglets, recherche, vignettes ; la liste défile, le reste reste en place ── */
+.dk-dialog.wide { width: min(940px, 100%); height: calc(100dvh - 16px); }
+.dk-dialog.wide .dk-dialog-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.dk-browser { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.dk-browser-bar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.dk-seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.dk-seg button { font: 700 14px var(--hud); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: transparent; border: 0; padding: 8px 16px; cursor: pointer; }
+.dk-seg button + button { border-left: 1px solid var(--line); }
+.dk-seg button b { margin-left: 6px; color: var(--ink); font-weight: 600; }
+.dk-seg button.on { color: #1c1400; background: var(--gold-2); }
+.dk-seg button.on b { color: #1c1400; }
+.dk-find { flex: 1 1 180px; min-width: 0; font: 600 15px var(--hud); color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; outline: none; }
+.dk-find:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 196, 81, 0.18); }
+.dk-tiles { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; align-content: start; padding: 2px 4px 8px 2px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.dk-wide { grid-column: 1 / -1; }
+.dk-tilecard { position: relative; }
+.dk-pick { width: 100%; display: grid; gap: 2px; padding: 0 0 10px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: rgba(14, 18, 40, 0.7); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.14s, transform 0.14s; }
+.dk-pick:hover, .dk-tilecard.on .dk-pick { border-color: var(--gold); transform: translateY(-2px); }
+.dk-art { display: block; aspect-ratio: 16 / 9; background: #10142c center 20% / cover; margin-bottom: 6px; mask-image: linear-gradient(#000 70%, transparent); }
+.dk-pick b { padding: 0 10px; font: 700 15px/1.2 var(--hud); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-pick small { padding: 0 10px; color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-pick small i { color: #ffb36b; font-style: normal; }
+.dk-del { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border-radius: 8px; border: 1px solid var(--line); background: rgba(8, 10, 24, 0.82); color: var(--muted); cursor: pointer; opacity: 0; transition: opacity 0.12s; }
+.dk-del svg { width: 14px; height: 14px; }
+.dk-tilecard:hover .dk-del, .dk-del:focus-visible { opacity: 1; }
+.dk-del:hover { color: var(--foe); border-color: var(--foe); }
+@media (hover: none) { .dk-del { opacity: 1; } }
+
+/* ── Téléphone (paysage ou portrait) : en-tête sur une ligne d'icônes, bandeaux compacts, plus de place pour les cartes ── */
+@media (max-height: 560px), (max-width: 759px) {
+  .dk { gap: 5px; padding-top: max(5px, env(safe-area-inset-top)); padding-bottom: max(5px, env(safe-area-inset-bottom)); }
+  .dk-top { flex-wrap: nowrap; gap: 5px; }
+  .dk-top .dk-lbl, .dk-filters .dk-lbl { display: none; }
+  .dk-top .btn.small, .dk .dk-filters { min-width: 40px; padding-inline: 9px; justify-content: center; }
+  .dk-filters svg { display: block; }
+  .dk-history-tools { gap: 3px; }
+  .dk-name { flex: 1 1 90px; min-width: 70px; }
+  .dk-name input { font-size: 15px; padding: 6px 9px; min-height: 40px; }
+  .dk-chip { padding: 3px 8px; font-size: 11px; }
+  .dk-chip b { font-size: 13px; }
+  /* L'état du brouillon ne s'affiche que s'il n'a pas pu être enregistré sur l'appareil. */
+  .dk-workspace-status:not(:has(.failed)) { display: none; }
+  .dk-note { padding: 3px 9px; font-size: 12.5px; }
+  .dk-note .btn.small { min-height: 34px; padding: 5px 10px; font-size: 11px; }
+  .dk-lib, .dk-deck { padding: 6px; gap: 5px; border-radius: 12px; }
+  .dk-search input { padding: 6px 9px; font-size: 14px; }
+  .dk-kinds { gap: 4px; }
+  .dk-kind { min-height: 32px; padding: 3px 10px; font-size: 11.5px; }
+  .dk-row-main { padding: 2px 3px; gap: 7px; }
+  .dk-row-main img { width: 27px; height: 39px; }
+  .dk-row-main b { font-size: 13.5px; }
+  .dk-row-main small { font-size: 11px; }
+  .dk-qty .btn.icon { width: 36px; height: 36px; min-width: 36px; min-height: 36px; }
+  .dk-tab { min-height: 36px; padding: 6px 8px; font-size: 12.5px; }
+  .dk-status { font-size: 12px; }
+  .dk-section h4 { margin: 6px 0 3px; }
+}
+
+/* Paysage : le panneau du deck défile d'un bloc (onglets collés en haut) au lieu d'enfermer les cartes sous l'état et le format. */
+@media (max-height: 560px) {
+  .dk-deck { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+  .dk-deck > * { flex: none; }
+  .dk-deck > .dk-cards { overflow: visible; min-height: auto; padding-right: 0; }
+  .dk-tabs { position: sticky; top: -6px; z-index: 2; margin: -6px -6px 0; padding: 6px 6px 4px; background: rgba(14, 17, 40, 0.97); border-radius: 12px 12px 0 0; }
+  .dk-grid { grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 5px; }
+  .dk-sheet { height: calc(100dvh - 16px); padding: 10px; gap: 6px; }
+  .dk-sheet footer { padding-top: 6px; }
+}
+
+/* Portrait : nom et enregistrement sur la première ligne, compteurs et outils sur la seconde. */
+@media (max-width: 759px) and (orientation: portrait) {
+  .dk-top { flex-wrap: wrap; row-gap: 6px; }
+  .dk-top > .btn.icon:first-child { order: 0; }
+  .dk-name { order: 1; flex: 1 1 calc(100% - 110px); }
+  .dk-top .dk-save { order: 2; }
+  .dk-chip { order: 3; }
+  .dk-top .dk-decks { order: 4; margin-left: auto; }
+  .dk-history-tools { order: 5; }
+}

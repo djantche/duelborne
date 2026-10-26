@@ -1,0 +1,38 @@
+/* Combobox (ui/Combobox.tsx) : un bouton qui affiche le choix, un panneau avec recherche, groupes et vignettes ; feuille montante sur téléphone. */
+.cb { display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0; min-height: 48px; padding: 6px 12px 6px 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+.cb:hover:not(:disabled) { border-color: rgba(245, 196, 81, 0.5); }
+.cb:focus-visible, .cb.open { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 196, 81, 0.2); }
+.cb:disabled { opacity: 0.5; cursor: not-allowed; }
+.cb > svg { flex: none; width: 18px; height: 18px; margin-left: auto; color: var(--muted); transition: transform 0.15s; }
+.cb.open > svg { transform: rotate(180deg); }
+.cb.empty .cb-text b { color: var(--muted); font-weight: 600; }
+.cb-text { display: grid; gap: 1px; min-width: 0; flex: 1; }
+.cb-text b { font: 700 15px/1.25 var(--hud); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cb-text small { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cb-thumb { flex: none; display: block; width: 36px; height: 36px; border-radius: 9px; background-color: #1d2250; background-size: cover; background-position: center 18%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+.cb-thumb.icon { display: grid; place-items: center; background: linear-gradient(160deg, #6a4ad0, #2a5ab0); color: #fff3c4; }
+.cb-thumb.icon svg { width: 18px; height: 18px; }
+
+.cb-panel { position: fixed; z-index: 400; display: flex; flex-direction: column; border-radius: 16px; border: 1px solid rgba(178, 192, 255, 0.35); background: rgba(16, 20, 48, 0.97); backdrop-filter: blur(14px); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); overflow: hidden; animation: pop 0.14s ease-out; }
+.cb-search { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--line); }
+.cb-search > svg { flex: none; width: 18px; height: 18px; color: var(--muted); }
+.cb-search input { flex: 1; min-width: 0; min-height: 40px; padding: 0; border: 0; background: transparent; color: var(--ink); font: 600 16px var(--hud); }
+.cb-search input:focus { outline: none; box-shadow: none; }
+.cb-count { flex: none; min-width: 26px; padding: 2px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); color: var(--muted); font: 600 12px var(--hud); text-align: center; font-variant-numeric: tabular-nums; }
+.cb-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 6px; }
+.cb-group { position: sticky; top: -6px; z-index: 1; margin: 4px -6px 2px; padding: 7px 16px; font: 700 11px var(--hud); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-2); background: rgba(16, 20, 48, 0.97); }
+.cb-option { display: flex; align-items: center; gap: 12px; padding: 7px 10px; border-radius: 11px; cursor: pointer; }
+.cb-option .cb-thumb { width: 44px; height: 44px; border-radius: 10px; }
+.cb-option.hot { background: rgba(255, 255, 255, 0.08); }
+.cb-option.on { background: rgba(245, 196, 81, 0.14); }
+.cb-option.on .cb-text b { color: var(--gold-2); }
+.cb-option > svg { flex: none; width: 18px; height: 18px; color: #5dffb0; }
+.cb-badge { flex: none; color: var(--muted); font: 600 12px var(--hud); font-style: normal; }
+.cb-empty { margin: 0; padding: 24px 12px; text-align: center; color: var(--muted); }
+
+.cb-backdrop { position: fixed; inset: 0; z-index: 399; background: rgba(3, 4, 12, 0.62); animation: fade 0.14s ease-out; }
+.cb-panel.sheet { left: 0; right: 0; bottom: 0; top: auto; width: 100%; max-height: min(80dvh, 680px); border-radius: 20px 20px 0 0; padding-bottom: env(safe-area-inset-bottom); animation: rise 0.2s ease-out; }
+.cb-panel.sheet::before { content: ''; display: block; flex: none; width: 40px; height: 4px; margin: 8px auto 0; border-radius: 2px; background: rgba(255, 255, 255, 0.25); }
+.cb-panel.sheet .cb-option { padding: 9px 10px; }
+@media (max-height: 520px) { .cb-panel.sheet { max-height: 92dvh; } }
+@media (prefers-reduced-motion: reduce) { .cb-panel, .cb-backdrop, .cb-panel.sheet { animation: none; } }

@@ -1,0 +1,91 @@
+/* Boutons et icônes : une seule échelle de dimensions partout, icônes toujours centrées. Chargé en dernier.
+   --ctl : bouton-icône · --ctl-s : petit bouton à texte · --ctl-icon : taille du pictogramme. */
+:root { --ctl: 44px; --ctl-s: 38px; --ctl-icon: 22px; }
+@media (max-height: 560px) { :root { --ctl: 40px; --ctl-s: 34px; --ctl-icon: 20px; } }
+
+.btn.icon { display: inline-grid; place-items: center; width: var(--ctl); height: var(--ctl); min-width: var(--ctl); min-height: var(--ctl); padding: 0; line-height: 0; }
+.btn.icon > svg { display: block; flex: none; width: var(--ctl-icon); height: var(--ctl-icon); margin: 0; }
+.btn.icon.mini { width: 30px; height: 30px; min-width: 30px; min-height: 30px; }
+.btn.icon.mini > svg { width: 15px; height: 15px; }
+.btn.small { min-height: var(--ctl-s); }
+.btn:not(.icon) > svg { flex: none; }
+/* Les panneaux et fenêtres du duel suivent la même échelle. */
+.panel .btn.icon, .modal-in header .btn.icon, .actions.icons button { width: var(--ctl); height: var(--ctl); min-width: var(--ctl); min-height: var(--ctl); }
+.panel .btn.icon.go, .modal-in header .btn.icon.go { width: calc(var(--ctl) * 1.2); }
+.panel .btn.icon svg, .modal-in header .btn.icon svg, .actions.icons button svg { width: var(--ctl-icon); height: var(--ctl-icon); }
+.panel .btn.icon.pos { width: auto; min-width: var(--ctl); padding: 0 10px; grid-auto-flow: column; gap: 3px; }
+
+/* ── Lecteur de replay ── */
+.replay-controls { width: min(760px, calc(100vw - 28px)); padding: 10px 14px 12px; gap: 8px; border-radius: 18px; }
+.replay-control-top { flex-wrap: wrap; gap: 8px 10px; }
+.replay-control-top > .btn.icon:last-child { margin-left: 6px; }
+.replay-control-extra { margin-left: auto; }
+.replay-control-top .btn.icon, .replay-control-bottom .btn.icon { width: var(--ctl); height: var(--ctl); padding: 0; }
+.replay-controls .btn.icon > svg, .replay-controls svg.icon { width: var(--ctl-icon); height: var(--ctl-icon); }
+.replay-control-bottom { gap: 8px; justify-content: flex-start; }
+.replay-control-bottom .btn.icon.play { width: calc(var(--ctl) * 1.25); height: calc(var(--ctl) * 1.25); border-radius: 50%; }
+.replay-control-bottom .sel { flex: 0 0 auto; width: 92px; min-width: 0; min-height: var(--ctl-s); }
+.replay-progress { margin-left: auto; display: grid; justify-items: end; gap: 1px; font: 600 12px var(--hud); color: var(--muted); font-variant-numeric: tabular-nums; }
+.replay-progress .replay-clock { font-size: 14px; }
+.replay-timeline { height: 24px; }
+.replay-timeline-rail { height: 5px; }
+.replay-timeline-thumb { width: 16px; height: 16px; }
+/* Lecteur masqué : un bouton lecture/pause et un bouton pour le rouvrir. */
+.replay-handle { position: fixed; z-index: 90; bottom: max(10px, env(safe-area-inset-bottom)); left: 50%; translate: -50% 0; display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 999px; border: 1px solid #a8b7ff66; background: rgba(14, 17, 40, 0.86); backdrop-filter: blur(12px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); }
+.replay-handle .btn.icon { border-radius: 50%; }
+body:has(#ui [aria-modal="true"]) .replay-handle { z-index: 25; }
+@media (max-height: 560px) {
+  .replay-controls { width: min(640px, 78vw); padding: 6px 10px 8px; gap: 4px; }
+  .replay-control-top .btn.icon, .replay-control-bottom .btn.icon { width: var(--ctl); height: var(--ctl); }
+  .replay-timeline { height: 20px; }
+}
+
+/* ── Barres de défilement : fines, arrondies, aux couleurs de l'application, sans flèches (partout) ── */
+:root { --scroll-thumb: rgba(165, 186, 255, 0.34); --scroll-thumb-hover: rgba(245, 196, 81, 0.6); }
+* { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; background: transparent; }
+*::-webkit-scrollbar-track, *::-webkit-scrollbar-corner { background: transparent; }
+*::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+*::-webkit-scrollbar-thumb { min-height: 36px; border: 3px solid transparent; border-radius: 999px; background: var(--scroll-thumb); background-clip: padding-box; }
+*::-webkit-scrollbar-thumb:hover, *::-webkit-scrollbar-thumb:active { background: var(--scroll-thumb-hover); background-clip: padding-box; }
+@media (max-height: 560px) {
+  .replay-control-top .replay-label { display: none; }
+}
+
+/* ── Titres des fenêtres : sobres (pas de capitales partout), et le compteur et les boutons ne passent jamais à la ligne ── */
+.modal-in header, .chooser .modal-in header { display: flex; flex-wrap: nowrap; align-items: center; gap: 12px; }
+.modal-in h2 { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px; font: 700 19px/1.25 var(--hud); letter-spacing: 0.01em; text-transform: none; color: var(--gold-2); overflow-wrap: anywhere; }
+.modal-in h2::first-letter { text-transform: uppercase; }
+.modal-in h2 > svg { flex: none; width: 20px; height: 20px; }
+.chooser-count { flex: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font: 600 15px var(--hud); color: var(--muted); font-variant-numeric: tabular-nums; }
+.chooser-count * { white-space: nowrap; }
+.modal-in header .chooser-buttons { flex: none; flex-wrap: nowrap; margin-left: 0; }
+@media (max-height: 560px) { .modal-in h2 { font-size: 16px; } .chooser-count { font-size: 13px; } }
+
+/* ── Colonne de droite du duel : les boutons (son, journal, abandon) s'adaptent à la largeur disponible et ne sont jamais rognés ── */
+.tools { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, var(--ctl)); justify-content: center; gap: 6px; }
+.tools .btn.icon { width: auto; min-width: 0; }
+@media (max-height: 560px) {
+  .tools { grid-auto-columns: minmax(0, 1fr); gap: 4px; justify-content: stretch; }
+  .tools .btn.icon { height: clamp(30px, 9dvh, 36px); min-height: 0; }
+  .tools .btn.icon > svg { width: 17px; height: 17px; }
+  /* Le bouton plein écran flottant suffit : celui de la colonne reste masqué (la règle générale des boutons-icônes le réaffichait). */
+  .tools .btn.icon[data-act='fullscreen'] { display: none; }
+}
+.replay-controls .btn.icon.on { border-color: var(--gold); background: rgba(245, 196, 81, 0.2); color: var(--gold-2); }
+
+/* ── Curseur clavier du duel (flèches) : un anneau net, sans clignotement ── */
+.kbd-nav #app .card.kbd-cursor, .kbd-nav #app .zone.kbd-cursor { outline: 3px solid #fff2b0; outline-offset: 3px; box-shadow: 0 0 0 7px rgba(255, 226, 139, 0.22), 0 0 22px rgba(255, 214, 110, 0.45); border-radius: 6px; z-index: 5; }
+.kbd-nav #app .hand.me .hcard:has(.kbd-cursor) .hlift { transform: translateY(-12%); }
+.kbd-nav #app .hand.me .hcard:has(.kbd-cursor) { z-index: 12; }
+@media (prefers-reduced-motion: no-preference) { .kbd-nav #app .kbd-cursor { transition: outline-offset 0.12s, box-shadow 0.12s; } }
+
+/* Aide des raccourcis : deux colonnes, la touche puis ce qu'elle fait. */
+.keys-help .modal-in { width: min(560px, calc(100vw - 24px)); }
+.keys-list { display: grid; gap: 6px; margin: 0; padding: 4px 2px; overflow-y: auto; }
+.keys-list > div { display: grid; grid-template-columns: minmax(118px, auto) 1fr; align-items: center; gap: 12px; }
+.keys-list dt { margin: 0; }
+.keys-list dd { margin: 0; color: var(--ink); font-size: 14px; line-height: 1.35; }
+.keys-list kbd { display: inline-block; min-width: 30px; padding: 3px 8px; border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 7px; background: rgba(255, 255, 255, 0.06); color: var(--gold-2); font: 700 13px var(--hud); text-align: center; white-space: nowrap; }
+/* Le bouton des raccourcis ne sert qu'avec un clavier et une souris. */
+@media (hover: none), (pointer: coarse), (max-height: 560px) { .tools .btn.icon.keys-btn { display: none; } }

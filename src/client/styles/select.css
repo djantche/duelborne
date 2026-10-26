@@ -1,0 +1,105 @@
+/* Questions du duel : panneau de sélection rangé hors du tapis, cartes interdites grisées, menu d'actions en icônes. */
+
+/* ── Panneau de sélection (ordinateur) : une barre compacte en haut de l'écran, entre les colonnes ── */
+@media (min-height: 561px) {
+  .panel.aside { top: 8px; bottom: auto; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px 12px; width: max-content; min-width: 300px; max-width: min(880px, calc(100vw - 640px)); padding: 8px 12px; border-radius: 14px; }
+  .panel.aside .panel-title { text-align: left; }
+  .panel.aside .tray { max-width: none; padding: 3px 6px; border: 0; background: transparent; }
+  .panel.aside .tray-card { width: 34px; height: 50px; border-width: 2px; }
+  .panel.aside .panel-row { margin-left: auto; flex-wrap: nowrap; }
+}
+.panel .panel-title { align-items: center; }
+.panel-text { display: grid; gap: 1px; min-width: 0; text-align: left; }
+.panel-text b { font: 700 16px/1.2 var(--hud); letter-spacing: 0.02em; }
+.panel-text small { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font: 600 13px var(--hud); color: var(--gold-2); }
+.panel-source { flex: none; display: block; width: 36px; height: 52px; border-radius: 5px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35), 0 4px 10px rgba(0, 0, 0, 0.5); cursor: help; }
+.panel-source .card { width: 100%; height: 100%; }
+.tray:empty, .tray-empty { display: none; }
+.tray { min-height: 0; }
+
+/* Boutons de réponse : des icônes, un libellé en infobulle. */
+.panel .btn.icon { width: 46px; height: 46px; padding: 0; justify-content: center; border-radius: 13px; }
+.panel .btn.icon svg { width: 22px; height: 22px; }
+.panel .btn.icon.go { width: 54px; }
+.panel .btn.icon.pos { width: auto; min-width: 52px; gap: 3px; padding: 0 10px; }
+.panel .btn.icon.pos svg { width: 20px; height: 20px; }
+.panel .btn.icon.pos.atk { border-color: #ff9a8a; }
+.panel .btn.icon.pos.def { border-color: #8fd8ff; }
+.btn.piles { position: relative; }
+.btn.piles .badge, .actions .badge { position: absolute; right: -5px; top: -6px; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; border-radius: 10px; background: var(--gold); color: #1c1400; font: 700 12px var(--hud); }
+.btn.piles.on { border-color: var(--gold); background: rgba(245, 196, 81, 0.2); }
+.modal-in header .btn.icon { width: 44px; height: 44px; padding: 0; justify-content: center; }
+.modal-in header .btn.icon.go { width: 52px; }
+.modal-in header .btn.icon svg { width: 22px; height: 22px; }
+/* La fenêtre des cartes hors terrain laisse voir le plateau derrière elle. */
+.modal.chooser.partial { background: rgba(3, 4, 12, 0.35); }
+
+/* ── Sélections interdites ── */
+.card.blocked { filter: grayscale(0.85) brightness(0.55); cursor: not-allowed; }
+.card.blocked::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: repeating-linear-gradient(135deg, transparent 0 7px, rgba(0, 0, 0, 0.28) 7px 9px); pointer-events: none; }
+.choice.blocked { opacity: 0.4; filter: grayscale(0.8); cursor: not-allowed; }
+
+/* ── Menu d'actions d'une carte : des icônes en ligne ── */
+.actions.icons { display: flex; gap: 6px; min-width: 0; padding: 6px; }
+.actions.icons button { position: relative; justify-content: center; width: 52px; height: 52px; padding: 0; border-radius: 12px; border: 1px solid rgba(245, 196, 81, 0.35); background: rgba(255, 255, 255, 0.05); }
+.actions.icons button svg { width: 26px; height: 26px; }
+.actions.icons button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+@media (max-height: 560px) {
+  .actions.icons button { width: 46px; height: 46px; }
+  .panel-source { display: none; }
+  .panel .btn.icon { width: 42px; height: 42px; }
+}
+
+
+/* ── Matériels Xyz : des cartes couchées sous le monstre, dont le bord dépasse (les plus anciennes dessous) ── */
+.xyz-stack { position: absolute; inset: 0; display: grid; place-items: center; transform: translateZ(0.5px); pointer-events: none; }
+.xyz-mat { position: absolute; display: block; width: calc(var(--cw) * 0.7); height: calc(var(--ch) * 0.7); transform: translateY(calc(var(--ch) * (0.26 + 0.04 * (var(--k) + 1)))) rotate(90deg); filter: brightness(0.8) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.65)); border-radius: 4px; }
+.xyz-mat .card { width: 100%; height: 100%; cursor: default; }
+.xyz-stack.foe .xyz-mat { transform: translateY(calc(var(--ch) * -1 * (0.26 + 0.04 * (var(--k) + 1)))) rotate(270deg); }
+
+/* ── Main : les effets gardent la couleur du type de carte, avec un halo plus épais et sans pulsation ── */
+.hand .card::after { inset: -2px; border-radius: 8px; }
+.hand .card.effect-ready { --effect-line: 4px; --effect-spread: 6px; --effect-blur: 30px; }
+.hand .card.effect-ready:not(.picked):not(.selected):not(.aimed)::after { animation: none; }
+.hand .card.pickable::after { box-shadow: 0 0 0 2px rgba(245, 205, 110, 0.85), 0 0 14px rgba(245, 196, 81, 0.3); animation: none; }
+.hand .card.picked::after { box-shadow: 0 0 0 2px rgba(120, 255, 190, 0.85), 0 0 16px rgba(93, 255, 176, 0.3); }
+
+/* ── Menu d'actions : verre sombre, une couleur par type d'action, survol doux (plus de jaune plein) ── */
+.actions { border-color: rgba(190, 200, 255, 0.28); background: rgba(14, 17, 40, 0.92); backdrop-filter: blur(10px); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6); }
+.actions button svg { stroke-width: 1.7; }
+.actions button:hover, .actions button:focus-visible { background: rgba(255, 255, 255, 0.09); color: var(--ink); }
+.actions button:hover svg { color: inherit; }
+.actions.icons button { border-color: rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.04); transition: background 0.14s, border-color 0.14s, transform 0.14s; }
+.actions.icons button:hover, .actions.icons button:focus-visible { transform: translateY(-2px); background: rgba(255, 255, 255, 0.1); }
+.actions button.k-cardUp svg { color: #8fd8ff; }
+.actions button.k-cardBack svg { color: #b9c4ee; }
+.actions button.k-bolt svg { color: #cdaeff; }
+.actions button.k-spark svg { color: #ffd98a; }
+.actions button.k-rotate svg { color: #d6dcf2; }
+.actions button.k-sword svg { color: #ffb68a; }
+.actions button.k-cardUp:hover { border-color: #8fd8ff; }
+.actions button.k-cardBack:hover { border-color: #b9c4ee; }
+.actions button.k-bolt:hover { border-color: #cdaeff; }
+.actions button.k-spark:hover { border-color: #ffd98a; }
+.actions button.k-rotate:hover { border-color: #d6dcf2; }
+.actions button.k-sword:hover { border-color: #ffb68a; }
+.actions .badge { background: #dcc4ff; color: #231037; border: 1px solid #f5eaff; }
+.zone .statline { transform: translateZ(3px); }
+
+/* ── Téléphone en paysage : le panneau de sélection reste dans la hauteur de l'écran, ses miniatures défilent et ses boutons restent visibles ── */
+@media (max-height: 560px) {
+  .panel.aside { top: 54px; max-height: calc(100dvh - 62px); display: flex; flex-direction: column; align-items: stretch; overflow: hidden; }
+  .panel.aside .panel-title { flex: none; }
+  .panel.aside .tray { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; overscroll-behavior: contain; align-content: flex-start; }
+  .panel.aside .panel-row { flex: none; flex-direction: row; justify-content: center; flex-wrap: nowrap; }
+  .panel.aside .panel-row .btn.icon { flex: none; }
+}
+
+/* ── Main : la bande visible de chaque carte s'adapte à la largeur disponible (jamais moins de 18 px), et la carte touchée monte sans trop grossir ── */
+.hand.me { container-type: inline-size; }
+.hand.me .hcard { --strip: clamp(18px, calc((84cqw - var(--hw)) / max(var(--n) - 1, 1)), calc(var(--hw) * 0.62)); margin-inline: calc((var(--strip) - var(--hw)) / 2); }
+@media (max-height: 560px), (hover: none) {
+  .hand.me .hcard.known:hover .hlift, .hand.me .hcard.known.raised .hlift, .hand.me .hcard.known:has(.card.picked) .hlift { transform: translateY(-24%) scale(1.04); }
+  .hand.me .hcard.known.raised, .hand.me .hcard.known:has(.card.picked) { z-index: 9; }
+}
+@media (hover: none) { .hand.me .hcard.known:hover:not(.raised):not(:has(.card.picked)) .hlift { transform: none; } }

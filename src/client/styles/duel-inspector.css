@@ -1,0 +1,191 @@
+/* Lecture au clic et sélection : mêmes surfaces compactes sur ordinateur et téléphone. */
+/* Bureau : conserver la colonne et son image fixe ; seul le texte défile. */
+.duel > .left { padding-block: 3dvh; }
+.card-inspector { display: none; }
+.duel:not(.has-card-detail) > .left { visibility: hidden; pointer-events: none; }
+/* Les textes de l'interface ne déclenchent pas de sélection au toucher. */
+body, body * { -webkit-user-select: none !important; user-select: none !important; }
+input, textarea, [contenteditable="true"] { -webkit-user-select: text !important; user-select: text !important; }
+* { scrollbar-width: none !important; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.card-inspector { position: fixed; z-index: 25; top: max(6px, env(safe-area-inset-top)); left: 18%; width: 64%; height: 40dvh; overflow: hidden; border-color: #5ad1ff88; border-radius: 10px; background: #091321f7; }
+/* Les deux blocs ont des responsabilités distinctes : résumé fixe et description seule défilante. */
+.duel > .left > .detail, .card-inspector .detail { display: flex; flex-direction: column; align-items: stretch; min-height: 0; overflow: hidden; }
+.duel > .left > .detail { gap: 12px; border-color: #a5baff40; box-shadow: 0 10px 30px #0006; background: #101a30e8; }
+.detail .card-summary { flex: none; display: grid; gap: 8px; width: 100%; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.detail .card-heading { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.detail .card-heading h3, .detail .card-heading .meta { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
+.detail .card-heading h3 { font-size: 15px; }
+.detail .card-heading .meta { font-size: 12px; }
+.detail .card-facts { display: flex; gap: 10px; align-items: start; }
+.detail .card-facts > .card { flex: none; width: clamp(48px, 5.6vw, 72px); height: auto; aspect-ratio: 59 / 86; cursor: default; }
+.detail .card-facts .detail-text { flex: 1; min-width: 0; align-content: start; }
+.detail .card-facts .nums { display: flex; flex-wrap: wrap; gap: 4px 9px; font-size: 16px; }
+.detail > .card-description { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; align-content: start; padding-right: 3px; }
+.card-inspector .detail { height: 100%; padding: 8px 10px; gap: 6px; border: 0; border-radius: 0; background: transparent; backdrop-filter: none; }
+.card-inspector .card-summary { gap: 6px; padding-bottom: 6px; }
+.card-inspector .card-facts > .card { width: auto; height: 13dvh; }
+.card-inspector .card-summary .en, .card-inspector .card-summary .trib-row { display: none; }
+.card-inspector .card-description .desc { font-size: 13px; line-height: 1.45; }
+.card-inspector .card-description .desc .eff-block { padding: 4px 7px; background: transparent; }
+body:has(.duel) #ui .modal.selection-dock { place-items: end center; padding-bottom: 8px; padding-top: 43dvh; background: transparent; backdrop-filter: none; pointer-events: none; }
+.modal.selection-dock .modal-in { pointer-events: auto; width: min(760px, 82vw); max-height: 54dvh; min-height: 0; gap: 8px; padding: 10px 12px; background: #091321f7; border-color: #5ad1ff66; box-shadow: 0 8px 24px #0008; }
+.selection-dock .grid { flex-wrap: nowrap; overflow-x: auto; overflow-y: auto; justify-content: safe center; min-height: 0; }
+.selection-dock .choice { flex: none; }
+.selection-dock .modal-in header { flex-wrap: wrap; }
+.selection-dock .chooser-buttons { margin-left: auto; }
+.selection-dock .choice .card { width: 84px; height: 122px; }
+.selection-dock .choice small { font-size: 11px; }
+/* L'éventail adverse reste dans l'écran. Les identités cachées restent des dos de carte. */
+.duel .hand.foe { top: calc(var(--fh) * -.5); }
+.duel .hand.foe .hcard { margin-inline: calc(var(--fh) * .686 * -.4); }
+
+.duel .hand.me { bottom: calc(var(--hh) * -.28); }
+.duel.selecting-cards .hand.me .hcard .hlift { transform: none; }
+.duel.selecting-cards .hand.me .hcard.known { z-index: auto; }
+.duel.selecting-cards .hand.me .card.picked { outline: 2px solid #99d8cf; outline-offset: -2px; }
+.card-inspector :focus-visible, .selection-dock :focus-visible { outline: 2px solid var(--me); outline-offset: 2px; }
+@media (max-height: 560px) {
+  .card-inspector { display: block; }
+  .duel > .left { display: none; }
+  body:has(.duel) #ui .modal { padding-left: 8px; padding-right: 8px; }
+  .duel { grid-template-columns: minmax(0, 1fr) clamp(112px, 15vw, 150px); --hh: min(30dvh, 12.5vw); }
+  .card-inspector .card-summary h3 { font-size: 15px; }
+  .card-inspector .card-summary .nums { font-size: 14px; gap: 3px 9px; }
+  .card-inspector .card-summary .meta { font-size: 12px; }
+  .card-inspector .card-description .desc { font-size: 12.5px; }
+  .selection-dock .modal-in { width: min(760px, 85vw); }
+  .selection-dock .choice .card { width: 65px; height: 95px; }
+  .selection-dock .where { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-inspector, .modal.selection-dock .modal-in { animation: none; }
+}
+
+/* Révélation adverse : petit aperçu éphémère, sans bouton et sans capture de gestes. */
+.fx-reveal-toast { position: fixed; z-index: 6; top: 54px; left: calc(max(240px, 19vw) + 8px); width: min(300px, calc(100vw - 16px)); display: grid; gap: 4px; padding: 8px; border: 1px solid #5ad1ff66; border-radius: 8px; color: var(--ink); background: #091321f5; }
+.fx-reveal-toast .card { width: 34px; height: 50px; }
+.fx-reveal-toast .notice-cards { overflow-y: auto; overscroll-behavior: contain; display: grid; gap: 4px; }
+.fx-reveal-toast .card-notice { display: flex; align-items: center; gap: 9px; width: 100%; padding: 4px; border: 1px solid transparent; border-radius: 5px; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.fx-reveal-toast .card-notice > span { min-width: 0; display: grid; gap: 4px; }
+.fx-reveal-toast .reveal-thumb { flex: none; pointer-events: none; }
+.fx-reveal-toast .card-notice:hover { background: #5ad1ff14; border-color: #5ad1ff66; }
+.fx-reveal-toast .card-notice:focus-visible { outline: 2px solid var(--gold-2); outline-offset: -2px; }
+.fx-reveal-toast small { color: var(--me); text-transform: uppercase; font-size: 11px; }
+.fx-reveal-toast b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 14px; }
+.fx-effect-notice { width: min(380px, calc(100vw - 16px)); }
+.fx-effect-notice .card-notice { align-items: flex-start; }
+.fx-effect-notice .effect-excerpt { margin: 0; color: var(--ink); font: 500 13px/1.4 var(--hud); text-transform: none; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; text-overflow: ellipsis; }
+@media (max-height: 560px) { .fx-reveal-toast { width: min(280px, calc(100vw - 16px)); } .fx-effect-notice { width: min(340px, calc(100vw - 16px)); } }
+/* Téléphone : aperçu compact rangé en haut à gauche, dans la marge du tapis (largeur posée par layoutCardNotices). */
+.fx-reveal-toast.corner { gap: 2px; padding: 5px; border-radius: 7px; background: #091321e6; box-shadow: 0 4px 14px #0007; }
+.fx-reveal-toast.corner small { font-size: 9.5px; letter-spacing: .04em; }
+.fx-reveal-toast.corner .card-notice { gap: 6px; padding: 2px; }
+.fx-reveal-toast.corner .card { width: 26px; height: 38px; }
+.fx-reveal-toast.corner b { font-size: 12px; line-height: 1.2; }
+.fx-reveal-toast.corner .card-notice > span { gap: 2px; }
+.fx-effect-notice.corner .effect-excerpt { font-size: 11px; line-height: 1.3; -webkit-line-clamp: 4; line-clamp: 4; }
+
+/* Références de chaîne : sortie vers l’écran, puis promotion lisible du maillon suivant. */
+.chain-overview { position: fixed; z-index: 23; display: flex; gap: 64px; align-items: center; translate: 0 -50%; padding: 58px 0; pointer-events: none; background: radial-gradient(ellipse, #071020c4, transparent 75%); }
+.chain-overview-card { position: relative; flex: none; width: calc(var(--chain-card-height) * .686); height: var(--chain-card-height); translate: 0 32px; filter: drop-shadow(0 6px 12px #0009); transform-origin: 0 0; }
+.chain-overview-card:nth-child(even) { translate: 0 -32px; }
+.chain-overview-card > .card { position: relative; z-index: 1; width: 100%; height: 100%; rotate: -8deg; transition: rotate .72s cubic-bezier(.4,0,.2,1); box-shadow: 0 0 20px #c5fff335; }
+.chain-overview-card:nth-child(even) > .card { rotate: 8deg; }
+.chain-overview-card > .chain-number { position: absolute; z-index: 5; left: -14px; bottom: -20px; color: #efffff; font: 700 calc(var(--chain-card-height) * .28)/1 var(--hud); -webkit-text-stroke: 1px #66ffe2; text-shadow: 0 0 5px #3debd1, 0 0 16px #54ffe6b0, 0 3px 4px #061b28; }
+.chain-effect.image-link::before { z-index: 5; }
+
+/* Le survol soulève la carte et présente ses actions, sans inclinaison 3D. */
+.duel .hand.me .hcard.known:hover:not(.raised):not(:has(.card.picked)) .hlift { transform: none; }
+.duel .hand.me .hcard.known:hover:not(.raised):not(:has(.card.picked)) { z-index: auto; }
+.duel .hand.me .hcard.known.raised .hlift { transform: translateY(-27%) scale(1.1); }
+.duel .hand.me .hcard.known.raised { z-index: 11; }
+@media (hover: hover) and (pointer: fine) {
+  .duel:not(.selecting-cards) .hand.me .hcard.known:hover .hlift { transform: translateY(-27%) scale(1.1); }
+  .duel:not(.selecting-cards) .hand.me .hcard.known:hover { z-index: 12; }
+}
+.duel.selecting-cards .hand.me .hcard.known .hlift { transform: none; }
+/* Le liseré appartient à la surface de sa carte, sous la carte voisine. */
+.duel .hand .card { isolation: isolate; }
+.duel .hand .card::after { inset: 0; border-radius: inherit; z-index: 4; animation: none; }
+.duel .hand .card.effect-ready:not(.picked):not(.selected):not(.aimed)::after { box-shadow: inset 0 0 0 2px var(--effect-color); }
+.duel .hand .card.pickable::after { box-shadow: inset 0 0 0 2px var(--gold); }
+.duel .hand .card.picked::after, .duel .hand .hcard.raised .card::after { opacity: 1; box-shadow: inset 0 0 0 2px #79e7bd; }
+
+/* La carte et le texte ne déterminent jamais les dimensions extérieures de la fiche. */
+.duel > .left > .detail { flex: 0 0 94dvh; height: 94dvh; width: 100%; min-width: 0; contain: size; }
+.card-inspector { min-width: 0; min-height: 0; contain: size; }
+.card-inspector .detail { width: 100%; min-width: 0; contain: size; }
+.dk-sheet { width: min(720px, calc(100vw - 24px)); height: min(78dvh, 740px); min-width: 0; min-height: 0; overflow: hidden; contain: size; }
+.dk-sheet-body.detail { flex: 1 1 0; flex-direction: column; align-items: stretch; overflow: hidden; padding: 0; background: transparent; border: 0; border-radius: 0; backdrop-filter: none; }
+.dk-sheet-body .card-facts > .card { position: relative; width: 64px; }
+.dk-sheet-body > .card-description { width: 100%; min-height: 0; flex: 1 1 0; }
+
+.chain-overview-dim { position: fixed; inset: 0; z-index: 22; background: rgba(2, 4, 9, .58); pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) { .chain-overview-card > .card { transition: none; } }
+
+/* Nom intégral ; caractéristiques dans le bloc à côté de l’image. */
+.detail .card-heading { display: block; }
+.detail .card-heading h3 { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.3; }
+.detail .card-facts .meta { white-space: normal; font-size: 12px; margin: 0 0 6px; }
+/* Commande de sélection discrète, sans miniature ni coche posée sur une carte. */
+#ui-root .panel.aside { top: auto; bottom: max(8px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: max-content; max-width: min(620px, calc(100vw - 24px)); display: flex; flex-direction: row; align-items: center; gap: 14px; padding: 9px 12px; border-radius: 12px; border-color: #7caaa555; background: #101c2cf5; box-shadow: 0 6px 22px #0006; }
+#ui-root .panel.aside .panel-title { min-width: 0; font-size: 14px; text-align: left; }
+#ui-root .panel.aside .panel-row { flex: none; align-items: center; }
+#ui-root .panel.aside .panel-source, #ui-root .panel.aside .tray { display: none; }
+.selection-dock .choice-status { min-height: 18px; color: var(--me); }
+/* Une carte explicitement choisie garde seule le soulèvement et les actions. */
+@media (hover: hover) and (pointer: fine) {
+  .duel.hand-locked:not(.selecting-cards) .hand.me .hcard.known:not(.raised):hover .hlift { transform: none; }
+  .duel.hand-locked:not(.selecting-cards) .hand.me .hcard.known:not(.raised):hover { z-index: auto; }
+}
+@media (max-height: 560px) {
+  /* Téléphone : la barre se range en colonne en bas de la marge gauche, sous les aperçus d'effet, pour ne recouvrir ni la main ni le tapis. */
+  #ui-root .panel.aside { top: auto; bottom: max(8px, env(safe-area-inset-bottom)); left: max(6px, env(safe-area-inset-left)); transform: none; width: clamp(132px, calc((100vw - clamp(112px, 15vw, 150px) - var(--zone) * 7.5) / 2 - 10px), 220px); max-width: none; max-height: calc(100dvh - 60px); flex-direction: column; align-items: stretch; gap: 6px; padding: 7px; overflow: visible; }
+  #ui-root .panel.aside .panel-title { flex-direction: row; align-items: flex-start; gap: 6px; font-size: 12px; }
+  #ui-root .panel.aside .panel-title > svg { width: 16px; height: 16px; margin-top: 1px; }
+  #ui-root .panel.aside .panel-title small { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 3px 6px; }
+  #ui-root .panel.aside .panel-text b { font-size: 12.5px; line-height: 1.2; }
+  #ui-root .panel.aside .lv { justify-content: flex-start; flex-wrap: nowrap; gap: 2px; }
+  #ui-root .panel.aside .lv i { width: 10px; height: 10px; }
+  #ui-root .panel.aside .panel-row { width: auto; flex-direction: row; justify-content: stretch; gap: 5px; }
+  #ui-root .panel.aside .panel-row > .btn:not(.icon) { flex: 1 1 auto; padding: 8px 6px; }
+  #ui-root .panel.aside .panel-row > .btn.icon { flex: none; }
+  #ui-root .panel.aside .btn { min-height: 36px; }
+}
+
+/* Les choix en main restent accessibles et ressortent dès que le moteur les propose. */
+.duel.selecting-cards .hand.me .hcard.known:has(.card.pickable, .card.picked) .hlift { transform: translateY(-8%) scale(1.02); }
+.duel.selecting-cards .hand.me .card.pickable::after { box-shadow: inset 0 0 0 3px #7df4ce; opacity: 1; }
+.duel.selecting-cards .hand.me .card.picked::after { box-shadow: inset 0 0 0 3px #ffe08a; opacity: 1; }
+/* Les matériaux restent sous leur porteur, face visible et en paysage. */
+.xyz-stack { transform: translateZ(-1px); }
+.xyz-mat { filter: brightness(.94) drop-shadow(0 2px 3px #0008); }
+
+.duel.selecting-cards .hand.me .hcard.known:has(.card.picked) .hlift { transform: translateY(-27%) scale(1.1); }
+@media (hover: hover) and (pointer: fine) {
+  .duel.selecting-cards .hand.me .hcard.known:has(.card.pickable):hover .hlift { transform: translateY(-27%) scale(1.1); }
+  .duel.selecting-cards .hand.me .hcard.known:has(.card.pickable):hover { z-index: 12; }
+}
+
+/* La lecture demandée par maintien occupe tout l’écran et garde une grande carte à gauche. */
+.card-inspector.card-inspector-full { display: block; z-index: 140; inset: 0; width: 100%; height: 100dvh; border: 0; border-radius: 0; background: #080f1df7; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+.card-inspector-full .inspector-close { position: absolute; z-index: 2; top: max(8px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); width: 40px; height: 40px; }
+.card-inspector-full .detail { display: grid; grid-template-columns: min(28vw, 55dvh, 280px) minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); gap: 10px 20px; padding: 8px; }
+.card-inspector-full .card-summary, .card-inspector-full .card-facts { display: contents; }
+.card-inspector-full .card-heading { grid-column: 2; grid-row: 1; padding: 4px 44px 8px 0; border-bottom: 1px solid var(--line); }
+.card-inspector-full .card-heading h3 { font-size: clamp(18px, 2.8vw, 28px); }
+.card-inspector-full .card-facts > .card { grid-column: 1; grid-row: 1 / 4; align-self: start; width: 100%; height: auto; aspect-ratio: 59 / 86; }
+.card-inspector-full .card-facts > .detail-text { grid-column: 2; grid-row: 2; }
+.card-inspector-full .card-summary .meta { display: block; font-size: 14px; }
+.card-inspector-full .card-summary .nums { font-size: 19px; }
+.card-inspector-full .card-description { grid-column: 2; grid-row: 3; padding-bottom: 12px; }
+.card-inspector-full .card-description .desc { font-size: clamp(15px, 1.8vw, 20px); line-height: 1.55; }
+.card-hold-progress { position: fixed; z-index: 145; width: 44px; height: 44px; translate: -50% -50%; pointer-events: none; border-radius: 50%; background: #071020c9; box-shadow: 0 2px 14px #000a; }
+.card-hold-progress { animation: hold-ring-in .12s ease-out; }
+@keyframes hold-ring-in { from { opacity: 0; scale: .7; } }
+@media (prefers-reduced-motion: reduce) { .card-hold-progress { animation: none; } }
+.card-hold-progress svg { width: 100%; height: 100%; rotate: -90deg; fill: none; stroke-width: 3; }
+.card-hold-progress .hold-track { stroke: #ffffff38; }
+.card-hold-progress .hold-fill { stroke: #ffe28b; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--hold, 0)); }

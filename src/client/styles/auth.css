@@ -1,0 +1,72 @@
+/* Page de connexion et d'inscription : une présentation à deux colonnes (ce que donne un compte, puis le formulaire) qui
+   se range en une colonne sur téléphone. Les champs ont une hauteur tactile et un bouton afficher / masquer. */
+.auth { width: min(980px, 100%); margin: 0 auto; padding: 4px 2px 24px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(16px, 3vw, 40px); align-items: safe center; align-content: safe center; min-height: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+
+.auth-brand { display: grid; gap: 18px; align-content: center; justify-items: start; padding: clamp(8px, 2vw, 24px); animation: title-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.auth-brand .logo { display: flex; align-items: baseline; gap: 0.06em; font: 900 clamp(34px, 5vw, 56px)/1 var(--display); letter-spacing: 0.06em; }
+.auth-brand .logo span { background: linear-gradient(180deg, #fff, var(--gold-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.auth-brand .logo em { font: 900 0.62em var(--display); font-style: normal; letter-spacing: 0.16em; color: var(--me); }
+.auth-brand h2 { font: 700 clamp(18px, 2.2vw, 24px)/1.25 var(--hud); letter-spacing: 0.02em; color: var(--ink); max-width: 22ch; }
+.auth-brand ul { display: grid; gap: 12px; list-style: none; margin: 0; padding: 0; }
+.auth-brand li { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 15px; line-height: 1.35; }
+.auth-brand li svg { flex: none; width: 38px; height: 38px; padding: 9px; border-radius: 12px; color: var(--gold-2); background: rgba(245, 196, 81, 0.12); border: 1px solid rgba(245, 196, 81, 0.28); }
+
+.auth-card { display: grid; gap: 16px; padding: clamp(16px, 2.6vw, 28px); border-radius: 22px; border: 1px solid rgba(245, 196, 81, 0.28); background: var(--glass, rgba(30, 36, 78, 0.72)); backdrop-filter: blur(14px); box-shadow: 0 24px 60px rgba(4, 6, 20, 0.5); animation: title-in 0.6s 0.08s cubic-bezier(0.2, 0.8, 0.2, 1) both; min-width: 0; }
+
+.auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: rgba(8, 10, 28, 0.6); border: 1px solid var(--line); }
+.auth-tab { min-height: 44px; padding: 8px 10px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font: 700 13px var(--hud); letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.16s, color 0.16s; }
+.auth-tab:hover { color: var(--ink); }
+.auth-tab.on { background: linear-gradient(180deg, rgba(245, 196, 81, 0.28), rgba(245, 196, 81, 0.12)); color: var(--gold-2); box-shadow: inset 0 0 0 1px rgba(245, 196, 81, 0.45); }
+.auth-tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+.auth-form { display: grid; gap: 14px; }
+.auth-field { display: grid; gap: 6px; min-width: 0; }
+.auth-label { font: 700 11px var(--hud); letter-spacing: 0.2em; text-transform: uppercase; color: var(--me); }
+.auth-field small { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.auth-input { position: relative; display: block; }
+.auth-input input { width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: 500 16px var(--hud); transition: border-color 0.15s, box-shadow 0.15s; }
+.auth-input input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 196, 81, 0.2); }
+.auth-input input[type='password'], .auth-input input[name='password'], .auth-input input[name='password2'] { padding-right: 86px; }
+.auth-eye { position: absolute; top: 50%; right: 6px; transform: translateY(-50%); min-width: 44px; min-height: 36px; padding: 0 10px; border: 0; border-radius: 9px; background: rgba(255, 255, 255, 0.07); color: var(--muted); font: 700 11px var(--hud); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+.auth-eye:hover, .auth-eye[aria-pressed='true'] { color: var(--gold-2); }
+.auth-eye:focus-visible { outline: 2px solid var(--gold); }
+
+.auth-meter { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 5px; align-items: center; margin-top: -4px; font: 600 12px var(--hud); color: var(--muted); }
+.auth-meter i { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.12); transition: background 0.2s; }
+.auth-meter span { margin-left: 6px; }
+.auth-meter.l1 i:nth-child(1) { background: var(--foe, #ff6b81); }
+.auth-meter.l2 i:nth-child(-n + 2) { background: var(--gold); }
+.auth-meter.l3 i { background: #5dffb0; }
+
+.auth-error { margin: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255, 107, 129, 0.55); background: rgba(255, 107, 129, 0.12); color: #ffd3da; font-size: 14px; line-height: 1.35; }
+.auth-form .btn.primary { min-height: 50px; font-size: 15px; }
+.auth-guest { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 14px; border-top: 1px solid var(--line); }
+.auth-guest p { flex: 1 1 220px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+
+/* Colonne unique : étroit, ou téléphone en portrait. */
+@media (max-width: 820px) {
+  .auth { grid-template-columns: minmax(0, 1fr); gap: 12px; max-width: 520px; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  .auth-brand { gap: 10px; padding: 0 2px; justify-items: center; text-align: center; }
+  .auth-brand h2 { max-width: none; font-size: 16px; }
+  .auth-brand ul { display: none; }
+}
+
+/* Téléphone en paysage : peu de hauteur, on garde deux colonnes compactes. */
+@media (max-height: 560px) and (min-width: 560px) {
+  .auth { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); max-width: none; gap: 14px; padding-bottom: 12px; align-items: start; }
+  .auth-brand { justify-items: start; text-align: left; gap: 8px; padding: 0; }
+  .auth-brand .logo { font-size: 30px; }
+  .auth-brand h2 { font-size: 14px; }
+  .auth-brand ul { display: grid; gap: 6px; }
+  .auth-brand li { font-size: 12.5px; gap: 8px; }
+  .auth-brand li svg { width: 28px; height: 28px; padding: 6px; border-radius: 9px; }
+  .auth-card { padding: 12px; gap: 10px; border-radius: 16px; }
+  .auth-form { gap: 8px; }
+  .auth-input input { min-height: 42px; padding: 6px 12px; }
+  .auth-field small { display: none; }
+  .auth-tab { min-height: 38px; }
+  .auth-guest { padding-top: 8px; }
+  .auth-guest p { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .auth-brand, .auth-card { animation: none; } }

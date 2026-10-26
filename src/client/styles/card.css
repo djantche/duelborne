@@ -1,0 +1,206 @@
+/*
+ * Gabarit de carte original, dessiné en CSS. Les dimensions internes sont en cqw
+ * (1cqw = 1 % de la largeur de la carte) : la carte reste proportionnée à toute taille.
+ */
+.card { container-type: size; position: relative; flex: none; cursor: pointer; }
+.card.rot { transform: rotate(90deg); }
+/* Le côté adverse est orienté vers son joueur ; la défense ajoute son quart de tour. */
+.card.reversed { transform: rotate(180deg); }
+.card.reversed.rot { transform: rotate(270deg); }
+
+.c-in {
+  --f1: #d8b45a;
+  --f2: #a67d2a;
+  --fi: #17120a; /* encre du bandeau de nom */
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2cqw;
+  padding: 4.2cqw;
+  border-radius: 4.6cqw;
+  color: #17120a;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.28) 0%, transparent 28%, transparent 70%, rgba(0, 0, 0, 0.22) 100%),
+    linear-gradient(165deg, var(--f1), var(--f2));
+  box-shadow: inset 0 0 0 1cqw rgba(0, 0, 0, 0.6), inset 0 0 0 1.9cqw rgba(255, 255, 255, 0.2), 0 1cqw 3cqw rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.c-name {
+  flex: 0 0 12.5cqw;
+  display: flex;
+  align-items: center;
+  gap: 1.6cqw;
+  padding: 0 1.4cqw 0 3cqw;
+  border-radius: 1.8cqw;
+  color: var(--fi);
+  font: 700 6.8cqw/1 var(--display);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.12));
+  box-shadow: inset 0 0 0 0.5cqw rgba(0, 0, 0, 0.4);
+}
+.c-name span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 0.6cqw; }
+.c-name.n-m { font-size: 5.7cqw; }
+.c-name.n-s { font-size: 4.8cqw; }
+.c-name.n-xs { font-size: 4.1cqw; }
+
+.orb {
+  --orb: #888;
+  flex: 0 0 9.6cqw;
+  height: 9.6cqw;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--orb) 45%, #fff), var(--orb) 58%, color-mix(in srgb, var(--orb) 55%, #000));
+  box-shadow: 0 0 0 0.5cqw rgba(0, 0, 0, 0.55);
+}
+.orb svg { width: 62%; height: 62%; filter: drop-shadow(0 0.3cqw 0.3cqw rgba(0, 0, 0, 0.5)); }
+.orb-dark { --orb: #6d38b0; }
+.orb-light { --orb: #d9b021; }
+.orb-fire { --orb: #de4a26; }
+.orb-water { --orb: #2a7fd4; }
+.orb-earth { --orb: #7d6034; }
+.orb-wind { --orb: #2f9d5c; }
+.orb-divine { --orb: #b8901c; }
+.orb-spell { --orb: #128a74; }
+.orb-trap { --orb: #a8327a; }
+
+.c-stars { flex: 0 0 7.4cqw; display: flex; justify-content: flex-end; gap: 0.7cqw; padding: 0 1cqw; }
+.c-stars.c-rank { justify-content: flex-start; }
+.c-stars i {
+  width: 7.4cqw;
+  height: 7.4cqw;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: normal 5.2cqw/1 sans-serif;
+  color: #fff1bd;
+  background: radial-gradient(circle at 35% 30%, #ffb651, #cf3d17 72%);
+  box-shadow: 0 0 0 0.4cqw rgba(0, 0, 0, 0.5);
+}
+.c-stars.c-rank i { background: radial-gradient(circle at 35% 30%, #6b6b78, #131318 72%); color: #ffd76a; }
+.c-stars.many i { width: 6.2cqw; height: 6.2cqw; font-size: 4.4cqw; }
+.c-kind { flex: 0 0 7.4cqw; text-align: right; padding: 0 2cqw; font: 700 5.6cqw/7.4cqw var(--hud); letter-spacing: 0.12em; text-transform: uppercase; color: #fff; text-shadow: 0 0.3cqw 0.6cqw rgba(0, 0, 0, 0.6); }
+
+/* Le fond sert de repli si l'illustration n'est pas (encore) téléchargée. */
+/* Toutes les illustrations occupent le même carré : une image d'un autre format (Pendule) est recadrée, sans jamais pousser le bas de la carte. */
+.c-art { flex: 0 0 auto; aspect-ratio: 1; min-height: 0; overflow: hidden; background: radial-gradient(circle at 50% 45%, #2b3160, #0a0c1c 70%); box-shadow: 0 0 0 0.8cqw rgba(0, 0, 0, 0.7), 0 0 0 1.5cqw rgba(255, 255, 255, 0.28); margin: 0.6cqw; }
+.c-art img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+
+.c-box {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.4cqw 2.6cqw;
+  border-radius: 1.4cqw;
+  color: #1a140c;
+  background: linear-gradient(180deg, #f6ecd2, #e2d3ae);
+  box-shadow: inset 0 0 0 0.5cqw rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+.c-stats { display: flex; justify-content: space-between; font: 700 7.6cqw/1.15 var(--hud); letter-spacing: 0.02em; white-space: nowrap; }
+.c-stats b { font-weight: 700; }
+.c-stats.solo { justify-content: center; text-transform: uppercase; letter-spacing: 0.1em; font-size: 6.6cqw; }
+
+/* Grande carte (aperçu) : illustration plus petite pour laisser la place au texte. */
+.card.lg .c-art { margin: 0.6cqw 8.6cqw; }
+.card.lg .c-box { justify-content: flex-start; gap: 0.8cqw; padding: 2cqw 3cqw; }
+.card.lg .c-type { font: 700 4.6cqw/1.1 var(--hud); letter-spacing: 0.03em; }
+.card.lg .c-desc { flex: 1; min-height: 0; overflow: hidden; font: 400 3.7cqw/1.22 var(--text); mask-image: linear-gradient(180deg, #000 78%, transparent); }
+.card.lg .c-stats { justify-content: flex-end; gap: 4cqw; font-size: 5.6cqw; padding-top: 0.8cqw; border-top: 0.4cqw solid rgba(0, 0, 0, 0.4); }
+.card.lg .c-stats.solo { justify-content: flex-end; }
+
+/* ── Couleurs de cadre par type ── */
+.frame-normal .c-in { --f1: #dcb95f; --f2: #a9802c; }
+.frame-effect .c-in { --f1: #d9783f; --f2: #9c4418; }
+.frame-ritual .c-in { --f1: #6a9be0; --f2: #2f559c; }
+.frame-fusion .c-in { --f1: #a273d1; --f2: #633a96; }
+.frame-synchro .c-in { --f1: #f4f2ea; --f2: #b9b6aa; }
+.frame-xyz .c-in { --f1: #45454f; --f2: #101014; --fi: #f2f2f6; }
+.frame-xyz .c-name { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04)); }
+.frame-link .c-in { --f1: #3f8cc9; --f2: #17446f; --fi: #f2f7ff; }
+.frame-link .c-name { background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.05)); }
+.frame-spell .c-in { --f1: #25b094; --f2: #0c6957; }
+.frame-trap .c-in { --f1: #cc5596; --f2: #84265b; }
+.frame-token .c-in { --f1: #a6a6ac; --f2: #6b6b72; }
+.frame-skill .c-in { --f1: #4f8fd0; --f2: #1f4a80; }
+/* Pendule : le cadre du type fond vers le vert des Magies. */
+[class*='_pendulum'] .c-in { background: linear-gradient(115deg, rgba(255, 255, 255, 0.28) 0%, transparent 28%, transparent 70%, rgba(0, 0, 0, 0.22) 100%), linear-gradient(180deg, var(--f1) 45%, #1c9a80 78%); }
+.frame-effect_pendulum .c-in { --f1: #d9783f; }
+.frame-normal_pendulum .c-in { --f1: #dcb95f; }
+.frame-ritual_pendulum .c-in { --f1: #6a9be0; }
+.frame-fusion_pendulum .c-in { --f1: #a273d1; }
+.frame-synchro_pendulum .c-in { --f1: #f4f2ea; }
+.frame-xyz_pendulum .c-in { --f1: #45454f; --fi: #f2f2f6; }
+
+/* ── Dos de carte (motif original) ── */
+.c-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 4.6cqw;
+  background:
+    radial-gradient(circle at 50% 50%, #ffe08a 0 2.6%, transparent 3.2%),
+    radial-gradient(circle at 50% 50%, transparent 0 11.6%, rgba(245, 196, 81, 0.9) 12% 13%, transparent 13.6%),
+    radial-gradient(circle at 50% 50%, transparent 0 19%, rgba(245, 196, 81, 0.35) 19.4% 20%, transparent 20.6%),
+    repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0.07) 0 5deg, transparent 5deg 15deg),
+    radial-gradient(ellipse at 50% 50%, #5a36b8 0%, #2a1a6e 42%, #0c0a24 100%);
+  box-shadow:
+    inset 0 0 0 1cqw #05040f,
+    inset 0 0 0 4cqw #120e33,
+    inset 0 0 0 4.8cqw rgba(245, 196, 81, 0.85),
+    inset 0 0 0 5.6cqw #120e33,
+    0 1cqw 3cqw rgba(0, 0, 0, 0.55);
+}
+.c-back::before,
+.c-back::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 46cqw;
+  height: 46cqw;
+  border: 0.8cqw solid rgba(245, 196, 81, 0.55);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.c-back::after { width: 62cqw; height: 62cqw; border-color: rgba(120, 160, 255, 0.35); transform: translate(-50%, -50%) rotate(0deg); border-radius: 50%; }
+
+/* ── États (surbrillances) ── */
+.card::after { content: ''; position: absolute; inset: -4px; border-radius: 9px; pointer-events: none; opacity: 0; transition: opacity 0.15s; }
+/* Effets activables : orange monstre, vert Magie, rose Piège. En Battle Phase, les attaquants disponibles sont dorés. */
+.card { --effect-color: #ffa45b; --effect-line: 3px; --effect-spread: 3px; --effect-blur: 22px; }
+.card.frame-spell { --effect-color: #47dfb5; }
+.card.frame-trap { --effect-color: #ef7cb9; }
+.card.effect-ready:not(.picked):not(.selected):not(.aimed)::after { opacity: 1; box-shadow: 0 0 0 var(--effect-line) var(--effect-color), 0 0 12px var(--effect-spread) color-mix(in srgb, var(--effect-color) 55%, transparent), 0 0 var(--effect-blur) var(--effect-spread) color-mix(in srgb, var(--effect-color) 30%, transparent); animation: effect-breathe 1.8s ease-in-out infinite; }
+.card.attack-ready:not(.picked):not(.selected):not(.aimed)::after { opacity: 1; animation: none; box-shadow: 0 0 0 3px #ffd66b, 0 0 12px 3px rgba(255, 204, 78, .55), 0 0 26px 3px rgba(255, 181, 46, .3); }
+@keyframes effect-breathe { 50% { opacity: .72; } }
+.card.selected::after { opacity: 1; box-shadow: 0 0 0 3px #fff, 0 0 22px rgba(255, 255, 255, 0.8); }
+.card.pickable::after { opacity: 1; box-shadow: 0 0 0 3px var(--gold), 0 0 20px var(--gold); animation: pulse 0.9s ease-in-out infinite; }
+.card.picked::after { opacity: 1; box-shadow: 0 0 0 4px #5dffb0, 0 0 26px #5dffb0; }
+.card.targetable { cursor: crosshair; }
+.card.targetable::after { opacity: 1; box-shadow: 0 0 0 3px var(--foe), 0 0 22px var(--foe); animation: pulse 0.8s ease-in-out infinite; }
+.card.targetable:hover::after,
+.card.aimed::after { opacity: 1; animation: none; box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--foe), 0 0 34px var(--foe); }
+
+/* ── Monstre Lien : flèches autour de l'illustration ── */
+.c-art { position: relative; }
+.arrow { position: absolute; width: 0; height: 0; border: 3.4cqw solid transparent; opacity: 0.28; }
+.arrow.on { opacity: 1; filter: drop-shadow(0 0 1.2cqw #ff5a3a); }
+.arrow.top { left: 50%; top: -1.2cqw; margin-left: -3.4cqw; border-top: 0; border-bottom: 5cqw solid #6b7190; }
+.arrow.bottom { left: 50%; bottom: -1.2cqw; margin-left: -3.4cqw; border-bottom: 0; border-top: 5cqw solid #6b7190; }
+.arrow.left { top: 50%; left: -1.2cqw; margin-top: -3.4cqw; border-left: 0; border-right: 5cqw solid #6b7190; }
+.arrow.right { top: 50%; right: -1.2cqw; margin-top: -3.4cqw; border-right: 0; border-left: 5cqw solid #6b7190; }
+.arrow.top-left { left: -0.6cqw; top: -0.6cqw; border-width: 5cqw 5cqw 0 0; border-color: #6b7190 transparent transparent transparent; }
+.arrow.top-right { right: -0.6cqw; top: -0.6cqw; border-width: 0 5cqw 5cqw 0; border-color: transparent #6b7190 transparent transparent; }
+.arrow.bottom-left { left: -0.6cqw; bottom: -0.6cqw; border-width: 5cqw 0 0 5cqw; border-color: transparent transparent transparent #6b7190; }
+.arrow.bottom-right { right: -0.6cqw; bottom: -0.6cqw; border-width: 0 0 5cqw 5cqw; border-color: transparent transparent #6b7190 transparent; }
+.arrow.on.top { border-bottom-color: #ff5a3a; }
+.arrow.on.bottom { border-top-color: #ff5a3a; }
+.arrow.on.left { border-right-color: #ff5a3a; }
+.arrow.on.right { border-left-color: #ff5a3a; }
+.arrow.on.top-left { border-top-color: #ff5a3a; }
+.arrow.on.top-right { border-right-color: #ff5a3a; }
+.arrow.on.bottom-left { border-left-color: #ff5a3a; }
+.arrow.on.bottom-right { border-bottom-color: #ff5a3a; }

@@ -1,0 +1,51 @@
+/* Adaptations aux petits écrans, chargées en dernier.
+   - Téléphone en portrait (étroit et haut) : l'écran-titre passe en colonne, les en-têtes laissent la place au bouton de son.
+   - Téléphone en paysage (bas) : les boutons plein écran et son flottent en haut à gauche ; les en-têtes se décalent.
+   - Écran tactile : toutes les cibles font au moins 40 px. */
+
+/* ── Téléphone en portrait ── */
+@media (max-width: 760px) and (min-height: 561px) {
+  .screen > header { padding-right: 60px; }
+  .screen > header .lobby-title { min-width: 0; }
+  .screen > header .lobby-title h1 { overflow-wrap: anywhere; font-size: clamp(20px, 6vw, 30px); }
+
+  .home { flex-direction: column; justify-content: flex-start; align-items: stretch; gap: 14px; padding: 58px 16px calc(24px + env(safe-area-inset-bottom)); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+  .home .title { width: 100%; gap: 10px; }
+  .home .deco { height: 84px; }
+  .home .deco .card { width: 56px; height: 82px; }
+  .home .logo { font-size: 44px; }
+  .home .title .field { max-width: 420px; }
+  .menu, .submenu { width: 100%; }
+  .home.has-sub .menu { display: none; }
+  .entry { padding: 12px 16px 12px 20px; gap: 14px; }
+  .entry b { font-size: 17px; letter-spacing: 0.08em; }
+  .entry.main b { font-size: 20px; }
+  .entry:hover, .entry:focus-visible, .entry.active, .entry:active { transform: none; }
+  .entry small { font-size: 12.5px; line-height: 1.3; }
+  .submenu { padding: 10px; }
+}
+
+/* ── Téléphone en paysage ── */
+@media (max-height: 560px) {
+  .screen:not(.home) > header { padding-left: 88px; padding-right: 12px; min-height: 44px; }
+  .screen.options { padding-top: 6px; }
+}
+
+/* ── Écran tactile ou petit écran : cibles de 40 px au moins ── */
+@media (pointer: coarse), (hover: none), (max-width: 760px), (max-height: 560px) {
+  .btn.small { min-height: 40px; padding-block: 8px; }
+  .btn.icon { min-width: 40px; min-height: 40px; }
+  .switch { min-height: 40px; }
+  .chip, .dk-kind { min-height: 36px; }
+  input:not([type='checkbox']):not([type='radio']), .sel { min-height: 40px; }
+}
+
+/* ── Fenêtres : le pied d'un formulaire reste visible pendant que le corps défile ── */
+/* Un bouton principal en bas de formulaire prend toute la largeur. */
+.dk-sticky .btn { width: 100%; }
+.dk-sticky { position: sticky; bottom: 0; z-index: 1; margin-inline: -2px; padding: 12px 2px 4px; background: linear-gradient(180deg, transparent, rgba(18, 22, 54, 0.96) 38%); }
+
+/* ── Pages à contenu long : c'est TOUTE la page qui défile, avec sa barre au bord de la fenêtre (jamais une zone au milieu de l'écran) ── */
+.app-page:has(> .screen.options), .app-page:has(> .screen.rooms), .app-page:has(> .screen.replay-library) { overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+.app-page > .screen.options, .app-page > .screen.rooms, .app-page > .screen.replay-library { height: auto; min-height: 100%; box-sizing: border-box; overflow: visible; padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+.screen.options .opt-list, .screen.options .tn-body, .screen.options .auth, .screen.rooms .room-list, .replay-library .replay-list { overflow: visible; flex: 0 0 auto; max-height: none; min-height: auto; }

@@ -1,0 +1,19 @@
+/* Illustration détourée au premier plan ; le vrai plateau reste visible derrière. */
+.summon-stage { position: fixed; inset: 0; z-index: 100; overflow: hidden; isolation: isolate; pointer-events: none; background: radial-gradient(ellipse at 50% 44%, #51400b70, #090c19c9 80%); }
+.summon-rays { position: absolute; inset: -100%; background: repeating-conic-gradient(from 12deg at 50% 50%, transparent 0deg 12deg, #ffe16b33 13deg 15deg, transparent 16deg 26deg); mask-image: radial-gradient(ellipse, #000 0%, #0009 25%, transparent 55%); animation: summon-rays-turn 18s linear infinite; }
+.summon-halo { position: absolute; width: min(84vw, 100dvh); aspect-ratio: 1; left: 50%; top: 43%; translate: -50% -50%; background: radial-gradient(ellipse, #ffffd0cc 0%, #ffdc4790 18%, #cc941b40 40%, transparent 69%); }
+.summon-figure { position: absolute; inset: 1dvh 10vw 6dvh; display: grid; place-items: center; }
+.summon-figure img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; filter: drop-shadow(0 3px 2px #091123) drop-shadow(0 0 12px #e9f8ff66); animation: summon-monster-drift 2.8s ease-in-out infinite; }
+.summon-caption { position: absolute; z-index: 1; left: 50%; bottom: 7dvh; translate: -50% 0; width: min(84vw, 960px); padding: 8px 3vw 10px; text-align: center; color: #f6f6ff; background: linear-gradient(90deg, transparent, #111b38eb 14%, #111b38eb 86%, transparent); border-block: 1px solid #ffe08699; box-shadow: 0 9px 28px #070a2255; }
+.summon-caption > small { display: block; color: #ffebaa; font: 700 clamp(10px, 1.8dvh, 17px)/1.3 var(--hud); letter-spacing: .16em; text-transform: uppercase; }
+.summon-caption h2 { margin: 4px 0 7px; font: 700 italic clamp(20px, 4.6dvh, 44px)/1.1 var(--hud); text-wrap: balance; text-shadow: 0 2px 4px #000; }
+.summon-caption p { margin: 0; font: 700 clamp(15px, 3dvh, 27px)/1.2 var(--hud); color: #eaf0ff; }
+.summon-level > span { display: inline-flex; gap: 4px; justify-content: center; color: #ffe690; font: 700 clamp(12px, 2.4dvh, 22px)/1.3 var(--hud); }
+.summon-level i { display: grid; place-items: center; width: 1.1em; aspect-ratio: 1; border-radius: 50%; font-style: normal; line-height: 1; color: #ffe375; background: radial-gradient(circle at 35% 25%, #ffca55, #cf4618 60%, #89201d); box-shadow: inset 0 0 0 1px #ffe494, 0 1px 3px #000; }
+.summon-level.rank i { color: #ffe69a; background: #111324; }
+@keyframes summon-rays-turn { to { rotate: 360deg; } }
+@keyframes summon-monster-drift { 0%, 100% { transform: translateX(-.55%); } 50% { transform: translateX(.55%); } }
+.summon-stage.reduced .summon-rays { animation: none; }
+.summon-stage.reduced .summon-figure img { animation: none; }
+@media (max-height: 500px) { .summon-caption { bottom: 3dvh; padding-block: 4px 6px; } .summon-caption h2 { margin-block: 2px 4px; } .summon-figure { inset: 0 12vw 3dvh; } }
+@media (prefers-reduced-motion: reduce) { .summon-rays, .summon-figure img { animation: none; } }

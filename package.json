@@ -1,0 +1,47 @@
+{
+  "name": "duelborne",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Duel de cartes en LAN, propulsé par le moteur de règles ocgcore. Open source, sans but commercial.",
+  "license": "AGPL-3.0-or-later",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "fetch-cards": "node scripts/fetch-cards.mjs",
+    "dev": "node src/server/index.ts",
+    "build": "vite build",
+    "start": "node src/server/index.ts --prod",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "build:ocgcore": "node vendor/ocgcore/build.mjs",
+    "fetch-fr": "node scripts/fetch-fr.mjs",
+    "fetch-ocg": "node scripts/fetch-ocg.mjs",
+    "build-decks": "node scripts/build-decks.mjs",
+    "fetch-fr-cdb": "node scripts/fetch-fr-cdb.mjs",
+    "fill-fr": "node scripts/fill-fr-cdb.mjs",
+    "fetch-sounds": "node scripts/fetch-sounds.mjs",
+    "fetch-master-duel-monsters": "node scripts/fetch-master-duel-monsters.mjs",
+    "check-labels": "node scripts/check-labels.mjs",
+    "audit": "node tools/audit/messages.ts",
+    "console": "node tools/audit/console.ts",
+    "restore-data": "npm run fetch-cards && npm run fetch-fr && npm run fetch-ocg && npm run fetch-fr-cdb && npm run fill-fr && npm run fetch-sounds",
+    "db:backup": "node tools/db/db.ts backup",
+    "db:list": "node tools/db/db.ts list",
+    "db:restore": "node tools/db/db.ts restore",
+    "build-format-lists": "node scripts/build-format-lists.mjs",
+    "import-list": "node tools/formats/import-list.ts",
+    "sync-lists": "node tools/formats/sync-lists.ts"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "@fontsource/rajdhani": "^5.3.0",
+    "@types/node": "^26.6.5",
+    "@types/ws": "^8.18.2",
+    "preact": "^11.0.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "ws": "^8.22.0"
+  }
+}
